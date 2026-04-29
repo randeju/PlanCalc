@@ -2254,7 +2254,7 @@ ${label}`;
     parts.push(`${internetPlans.join("\n")}`);
   }
 
-  const insuranceTotal = t.phoneInsurance + (t.tabletIns || 0) + (t.watchIns || 0);
+  const insuranceTotal = totalInsuranceForQuote();
   if (insuranceTotal > 0) {
     parts.push(`Insurance:\nDevice protection total: ${money(insuranceTotal)}/mo.`);
   }
