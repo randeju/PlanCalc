@@ -935,11 +935,7 @@
     .toolbar{
       gap:6px;
     }
-    #forceDesktopToggle{
-      width:auto;
-      transform:scale(1.05);
-    }
-    .toolbar button{
+.toolbar button{
       flex:1 1 calc(50% - 6px);
       min-height:40px;
       font-size:12px;
@@ -1295,18 +1291,33 @@
 </style>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+/* improved summary readability */
+.sticky-side .panel,
+.summary-table,
+.summary-discounts,
+#taxDisplay {
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.summary-table td,
+.summary-table th {
+  font-size: 17px;
+}
+
+.summary-table strong,
+.sticky-side strong {
+  font-size: 18px;
+}
+</style>
+
 </head>
 <body>
 <div class="app">
   <h1>Quote Calculator</h1>
-  
-  <label class="toggle" id="forceDesktopWrap" style="margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">
-    <input type="checkbox" id="forceDesktopToggle" onchange="toggleForceDesktop()" style="width:auto;" />
-    Force desktop version
-  </label>
-  <div class="status" id="desktopModeStatus" style="margin:-6px 0 12px 0;"></div>
-
-  <div class="app-grid">
+<div class="app-grid">
     <div class="builder-side">
 
   <div class="panel">
@@ -1332,7 +1343,7 @@
   <div class="panel">
     <div class="section-head">
       <h2>Tablets</h2>
-      <div class="tiny">Shared discount pool</div>
+      <div class="tiny"></div>
     </div>
     <div id="tabletLines"></div>
   </div>
@@ -1340,7 +1351,7 @@
   <div class="panel">
     <div class="section-head">
       <h2>Watches</h2>
-      <div class="tiny">Shared discount pool</div>
+      <div class="tiny"></div>
     </div>
     <div id="watchLines"></div>
   </div>
@@ -1422,7 +1433,7 @@
       <div class="field">
         <label>Customer name (optional)</label>
         <input type="text" id="customerName"
-      / oninput="state.customerName=this.value; renderQuotePreview();">
+       oninput="state.customerName=this.value; renderQuotePreview();"/>
     </div>
     
       <div class="field">
@@ -1446,9 +1457,9 @@
     </div>
     <div class="toolbar" style="margin-bottom:10px;">
       <button class="primary" onclick="copyCustomerQuoteSms()">Copy SMS Quote</button>
-            <button onclick="generateQuoteImage()">Generate Quote Image</button>
-      <button onclick="copyQuoteImage()">Copy Image</button>
-      <button onclick="downloadQuoteImage()">Download PNG</button>
+            
+      
+      
     </div>
     <div class="small-note" id="quoteImageStatus">SMS Quote copies a clean text version. Generate the image first if you want to copy or download it.</div>
     <div class="quote-box" id="quoteBox">
@@ -1994,9 +2005,7 @@ function updateInternetPerk(idx, j, value){
   state.internet[idx].perks[j] = value;
   renderSummary();
   renderQuotePreview();
-  toggleCustomerQuoteVisibility();
-  loadForceDesktopPreference();
-}
+  toggleCustomerQuoteVisibility();}
 
 function removeInternetPerk(idx, j){
   state.internet[idx].perks.splice(j, 1);
@@ -2100,7 +2109,7 @@ function buildCustomerQuoteSms(){
   const parts = [];
 
   if ((state.customerName || "").trim()) {
-    parts.push(`Hi ${state.customerName.trim()},`);
+    parts.push(`Hi ${state.customerName.trim()}, here is your monthly estimate`);
   }
 
   const phoneLines = activePhoneList.map((p, i) => {
@@ -2200,7 +2209,8 @@ if (watchLines.length) {
       const price = internetFinalPrice(x);
       const label = state.autopay ? `${money(price)}/mo with autopay` : `${money(price)}/mo without autopay`;
 
-      return `${name}: ${label}`;
+      return `${name}
+${label}`;
     });
     parts.push(`${internetPlans.join("\n")}`);
   }
@@ -2653,28 +2663,9 @@ function closePresetQr(event){
 
 
 
-function toggleForceDesktop(){
-  const cb = document.getElementById("forceDesktopToggle");
-  const on = !!cb?.checked;
-  document.body.classList.toggle("force-desktop", on);
-  const status = document.getElementById("desktopModeStatus");
-  if (status) status.textContent = on ? "Desktop layout forced on." : "";
-  try {
-    localStorage.setItem("forceDesktopLayout", on ? "1" : "0");
-  } catch(e){}
-}
 
-function loadForceDesktopPreference(){
-  let on = false;
-  try {
-    on = localStorage.getItem("forceDesktopLayout") === "1";
-  } catch(e){}
-  const cb = document.getElementById("forceDesktopToggle");
-  if (cb) cb.checked = on;
-  document.body.classList.toggle("force-desktop", on);
-  const status = document.getElementById("desktopModeStatus");
-  if (status) status.textContent = on ? "Desktop layout forced on." : "";
-}
+
+
 
 
 function render(){
