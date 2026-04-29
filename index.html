@@ -1313,6 +1313,31 @@
 }
 </style>
 
+
+<style>
+/* duplicate button bottom-right on phone cards */
+.phone-card, .phone-row, .phone-line, .card { position: relative; }
+.dup-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+</style>
+
+
+<style>
+/* duplicate phone button bottom right */
+.line-card {
+  position: relative;
+}
+.phone-duplicate-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1461,7 +1486,7 @@
       
       
     </div>
-    <div class="small-note" id="quoteImageStatus">SMS Quote copies a clean text version. Generate the image first if you want to copy or download it.</div>
+    <div class="small-note" id="quoteImageStatus">SMS Quote copies a clean text version. </div>
     <div class="quote-box" id="quoteBox">
       <div class="quote-preview" id="quotePreview"></div>
     </div>
@@ -1753,6 +1778,19 @@ function removePhonePerk(i, j){
 }
 
 
+function duplicatePhone(i){
+  const source = state.phones[i];
+  if (!source) return;
+
+  const copy = JSON.parse(JSON.stringify(source));
+  state.phones.splice(i + 1, 0, copy);
+
+  // Keep one trailing blank line if the duplicated line was the last active line.
+  ensurePhoneTrailingBlank();
+
+  render();
+}
+
 function removePhone(i){
   state.phones.splice(i, 1);
   if (!state.phones.length) state.phones = [blankPhone()];
@@ -1872,6 +1910,7 @@ function renderPhones(){
         </div>
         ` : ``}
       </div>
+      ${row.plan ? `<button type="button" class="link-btn phone-duplicate-btn" onclick="duplicatePhone(${i})">duplicate</button>` : ``}
     `;
     wrap.appendChild(card);
   });
