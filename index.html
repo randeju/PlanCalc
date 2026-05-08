@@ -455,7 +455,7 @@
     background:#fff;
     border-radius:18px;
     padding:18px;
-    box-shadow:0 18px 40px rgba(0,0,0,.25);
+    box-shadow:none;
     text-align:center;
   }
 
@@ -1315,26 +1315,181 @@
 
 
 <style>
-/* duplicate button bottom-right on phone cards */
-.phone-card, .phone-row, .phone-line, .card { position: relative; }
-.dup-btn {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
+/* Simple / Advanced mode */
+.advanced-only-hidden { display: none !important; }
+</style>
+
+
+
+
+
+<style>
+/* Ultra compact simple mode */
+body.simple-mode .line-card,
+body.simple-mode .device-row,
+body.simple-mode .internet-row {
+  padding: 2px 4px !important;
+  margin-bottom: 3px !important;
+  border-radius: 8px !important;
+}
+
+body.simple-mode .phone-compact-grid,
+body.simple-mode .device-compact-grid {
+  gap: 2px !important;
+}
+
+body.simple-mode .phone-col-box,
+body.simple-mode .device-col-box {
+  padding: 2px 4px !important;
+  min-height: unset !important;
+}
+
+body.simple-mode .line-top {
+  margin-bottom: 1px !important;
+  min-height: unset !important;
+}
+
+body.simple-mode .line-title {
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+}
+
+body.simple-mode .pill-row {
+  gap: 2px !important;
+  margin-bottom: 1px !important;
+}
+
+body.simple-mode .pill {
+  padding: 3px 6px !important;
+  font-size: 11px !important;
+  min-height: unset !important;
+  border-radius: 999px !important;
+}
+
+body.simple-mode .phone-plan-price,
+body.simple-mode .device-plan-price {
+  margin-top: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+}
+
+body.simple-mode .phone-col-title,
+body.simple-mode .device-col-title {
+  margin-bottom: 0 !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+}
+
+body.simple-mode .phone-duplicate-btn,
+body.simple-mode button[onclick*="duplicatePhone"] {
+  display: none !important;
 }
 </style>
 
 
 <style>
-/* duplicate phone button bottom right */
-.line-card {
-  position: relative;
+/* Simple mode: totals only in summary */
+body.simple-mode .summary-table::before {
+  content: "ESTIMATED MONTHLY TOTAL";
+  display: block;
+  font-weight: 900;
+  font-size: 13px;
+  margin: 0 0 8px 0;
+  letter-spacing: .03em;
 }
-.phone-duplicate-btn {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  z-index: 2;
+</style>
+
+
+<style>
+/* Extra compact simple mode: remove category-card feel */
+body.simple-mode .builder-side > .panel {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+body.simple-mode .builder-side > .panel .section-head {
+  display: none !important;
+}
+
+body.simple-mode .line-card,
+body.simple-mode .device-row,
+body.simple-mode .internet-row {
+  border: 1px solid #e5e7eb !important;
+  background: #fff !important;
+  padding: 2px 4px !important;
+  margin-bottom: 3px !important;
+  border-radius: 7px !important;
+}
+
+body.simple-mode .phone-col-box,
+body.simple-mode .device-col-box {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 1px 3px !important;
+}
+
+body.simple-mode .phone-compact-grid,
+body.simple-mode .device-compact-grid {
+  grid-template-columns: 1fr !important;
+  gap: 1px !important;
+}
+
+body.simple-mode .line-title {
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+
+body.simple-mode .pill {
+  padding: 3px 6px !important;
+  font-size: 11px !important;
+}
+
+body.simple-mode .phone-plan-price,
+body.simple-mode .device-plan-price {
+  font-size: 12px !important;
+  margin-top: 1px !important;
+}
+</style>
+
+
+
+<style>
+/* Restore simple mode category labels */
+body.simple-mode .line-title,
+body.simple-mode .line-top .line-title,
+body.simple-mode .device-title,
+body.simple-mode .internet-title {
+  display: block !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  opacity: .8 !important;
+}
+
+body.simple-mode .line-top {
+  min-height: 0 !important;
+  margin-bottom: 2px !important;
+}
+</style>
+
+
+<style>
+#presetQrModal {
+  background: #ffffff !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+#presetQrModal > div {
+  box-shadow: none !important;
+}
+#presetQrImg {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
 }
 </style>
 
@@ -1344,6 +1499,15 @@
   <h1>Quote Calculator</h1>
 <div class="app-grid">
     <div class="builder-side">
+
+<div class="panel" id="modePanel" style="margin-bottom:12px;">
+  <label class="toggle" style="font-weight:800;">
+    <input type="checkbox" id="advancedToggle" onchange="toggleAdvancedMode()" />
+    Advanced mode
+  </label>
+  <div class="tiny">Turn on to show device financing, insurance, BYOD, perks, and trade-in controls.</div>
+</div>
+
 
   <div class="panel">
     <div class="section-head">
@@ -1404,7 +1568,7 @@
           <label class="toggle"><input type="checkbox" id="national" checked /> National</label>
           <label class="toggle"><input type="checkbox" id="autopay" checked /> Autopay</label>
           <label class="toggle"><input type="checkbox" id="poypToggle" onchange="render()" /> POYP</label>
-        </div>
+</div>
         <div class="summary-discounts-fields">
           <div class="field summary-discount-name">
             <input type="text" id="extraDiscountName" placeholder="Discount name" oninput="render()" />
@@ -1510,10 +1674,10 @@
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.6);
+    background:#ffffff;
     align-items:center;
     justify-content:center;
-    z-index:9999;
+    z-index:99999;
   " onclick="closePresetQr(event)">
     <div style="
       background:#fff;
@@ -1522,10 +1686,10 @@
       text-align:center;
       max-width:320px;
       width:90%;
-      box-shadow:0 18px 40px rgba(0,0,0,.25);
+      box-shadow:none;
     ">
       <h3 style="margin:0 0 10px;">Scan to open quote</h3>
-      <img id="presetQrImg" alt="Preset QR code" style="width:220px;height:220px;display:block;margin:0 auto;" />
+      <img id="presetQrImg" alt="Preset QR code" style="width:320px;height:320px;display:block;margin:12px auto;background:#fff;border-radius:12px;" />
       <div style="margin-top:10px;">
         <button onclick="closePresetQr()">Close</button>
       </div>
@@ -1540,7 +1704,7 @@ const TERM_MONTHS = 36;
 const SAVE_KEY = "quote_calculator_saved_quotes_v1";
 
 const phonePricing = {
-  Ultimate:{1:100,2:90,3:75,4:65},
+  Ultimate:{1:105,2:95,3:80,4:70},
   Plus:{1:90,2:80,3:65,4:55},
   Welcome:{1:75,2:65,3:50,4:40}
 };
@@ -1551,7 +1715,7 @@ const watchPricing = { "Unlimited":15, "Unlimited Plus":25 };
 const perkPricing = {
   "Disney Bundle":10,
   "Netflix & Max (Ads)":13,
-  "YouTube Premium":10,
+  "YouTube Premium":12,
   "Apple Music Family":10,
   "Apple One Individual":15,
   "Apple One Family":20,
@@ -1577,6 +1741,7 @@ let state = {
   repPhoneNumber:"",
   textOnly:false,
   poyp:false,
+  advanced:false,
   quoteNote:"",
   phones:[blankPhone()],
   tablets:[blankDevice()],
@@ -1805,10 +1970,12 @@ function renderPhones(){
     card.className = "line-card";
     const f = financeForLine(row);
     const planPrice = row.plan ? phonePricing[row.plan][tier()] - (state.autopay ? 10 : 0) : 0;
+    const advanced = !!state.advanced;
 
     card.innerHTML = `
       <div class="line-top">
         <div class="line-title">Phone Line ${i+1}</div>
+        <button type="button" class="link-btn" onclick="duplicatePhone(${i})">duplicate</button>
         ${state.phones.length > 1 ? `<button type="button" class="link-btn" onclick="removePhone(${i})">remove line</button>` : ``}
       </div>
 
@@ -1816,12 +1983,13 @@ function renderPhones(){
         <!-- LEFT -->
         <div class="phone-col">
           <div class="phone-col-box">
-            <div class="phone-col-title">Plan</div>
+            
             <div class="pill-row">
               ${["Welcome","Plus","Ultimate"].map(p => `<button type="button" class="pill ${row.plan===p?"active":""}" onclick="setPhonePlan(${i},'${p}')">${p}</button>`).join("")}
             </div>
             ${row.plan ? `
               <div class="phone-plan-price">${money(planPrice)}/mo</div>
+              ${advanced ? `
               <label class="toggle">
                 <input type="checkbox" ${row.insurance ? "checked" : ""} onchange="state.phones[${i}].insurance=this.checked; render();" />
                 Insurance
@@ -1830,11 +1998,12 @@ function renderPhones(){
                 <input type="checkbox" ${row.byod ? "checked" : ""} onchange="state.phones[${i}].byod=this.checked; if(this.checked){state.phones[${i}].deviceName=''; state.phones[${i}].fullPrice=''; state.phones[${i}].promoDiscount='';} else {state.phones[${i}].byodDiscount='';} render();" />
                 BYOD
               </label>
+              ` : ``}
             ` : ``}
           </div>
         </div>
 
-        ${row.plan ? `
+        ${row.plan && advanced ? `
         <!-- MIDDLE -->
         <div class="phone-col">
           <div class="phone-col-box">
@@ -1901,6 +2070,7 @@ function renderPhones(){
                     <option value=""></option>
                     ${perkOptions.map(o=>`<option value="${o}" ${perk===o?"selected":""}>${o}</option>`).join("")}
                   </select>
+                  ${perk ? `<div class="tiny" style="min-width:70px;text-align:right;font-weight:700;">${money(perkPricing[perk] || 0)}/mo</div>` : ``}
                   <button type="button" class="link-btn" onclick="removePhonePerk(${i},${j})">x</button>
                 </div>
               `).join("")}
@@ -1910,7 +2080,6 @@ function renderPhones(){
         </div>
         ` : ``}
       </div>
-      ${row.plan ? `<button type="button" class="link-btn phone-duplicate-btn" onclick="duplicatePhone(${i})">duplicate</button>` : ``}
     `;
     wrap.appendChild(card);
   });
@@ -1931,6 +2100,7 @@ function renderDevices(key, title){
     const discounted = set.has(i);
     const planPrice = discounted ? basePlan * 0.5 : basePlan;
     const f = financeForLine(row);
+    const advanced = !!state.advanced;
 
     const card = document.createElement("div");
     card.className = "device-row";
@@ -1943,18 +2113,18 @@ function renderDevices(key, title){
       <div class="device-compact-grid">
         <div class="device-col">
           <div class="device-col-box">
-            <div class="device-col-title">Plan</div>
+            
             <div class="pill-row">
               ${planOptions.map(opt => `<button type="button" class="pill ${p===opt ? "active" : ""}" onclick="setDevicePlan('${key}', ${i}, '${opt}')">${opt}</button>`).join("")}
             </div>
             ${p ? `
               <div class="device-plan-price">${money(planPrice)}${discounted ? ` <span style="font-weight:500;color:#6b7280;">(from ${money(basePlan)})</span>` : ""}/mo</div>
-              <label class="toggle"><input type="checkbox" ${row.insurance ? "checked" : ""} onchange="toggleDeviceInsurance('${key}', ${i}, this.checked)" /> Insurance</label>
+              ${advanced ? `<label class="toggle"><input type="checkbox" ${row.insurance ? "checked" : ""} onchange="toggleDeviceInsurance('${key}', ${i}, this.checked)" /> Insurance</label>` : ``}
             ` : ``}
           </div>
         </div>
 
-        ${p ? `
+        ${p && advanced ? `
         <div class="device-col">
           <div class="device-col-box">
             <div class="device-col-title">Device</div>
@@ -2053,6 +2223,8 @@ function removeInternetPerk(idx, j){
 
 function renderSummary(){
   state.poyp = !!document.getElementById("poypToggle")?.checked;
+  state.advanced = !!document.getElementById("advancedToggle")?.checked;
+  document.body.classList.toggle("simple-mode", !state.advanced);
   const t = getTotals();
 
   const totalPlans = (state.autopay ? t.phonePlanYes : t.phonePlanNo) + t.tablet + t.watch;
@@ -2082,6 +2254,18 @@ function renderSummary(){
   const taxDisplay = document.getElementById("taxDisplay");
   if (taxDisplay){
     taxDisplay.textContent = `Estimated Sales Tax: ${money(t.estimatedSalesTax)} (on ${money(t.deviceTaxBase)} device total)`;
+  }
+
+  const summaryTable = document.querySelector(".summary-table");
+  if (summaryTable) {
+    summaryTable.querySelectorAll("tr").forEach(row => {
+      const isTotalRow = row.classList.contains("total-row");
+      row.style.display = (!state.advanced && !isTotalRow) ? "none" : "";
+    });
+  }
+
+  if (taxDisplay) {
+    taxDisplay.style.display = state.advanced ? "" : "none";
   }
 }
 
@@ -2158,9 +2342,7 @@ function buildCustomerQuoteSms(){
     ? "Bring Your Own Device"
     : ((p.deviceName || "").trim() || "Phone");
 
-  const label = activePhoneList.length > 1 && !p.byod
-    ? `${name} ${i + 1}`
-    : name;
+  const label = name;
 
   const financeCost = (!p.byod && (num(p.fullPrice) > 0 || num(p.promoDiscount) > 0 || (p.deviceName || "").trim()))
     ? `${money(f.netMonthly)}/mo (device cost)`
@@ -2174,13 +2356,16 @@ function buildCustomerQuoteSms(){
     ? `${money(planPrice)}/mo with autopay`
     : `${money(planPrice)}/mo without autopay`;
 
-  return [
+  return (state.advanced ? [
     `Line ${i + 1}: ${fullPlanName(p.plan)}`,
     `Plan cost: ${planPriceLabel}`,
     `Device: ${label}`,
     financeCost ? `Cost: ${financeCost}` : "",
     p.tradeIn ? "Eligible trade-in required" : ""
-  ]
+  ] : [
+    `Line ${i + 1}: ${fullPlanName(p.plan)}`,
+    `Plan cost: ${planPriceLabel}`
+  ])
     .filter(Boolean)
     .join("\n");
 });
@@ -2203,7 +2388,7 @@ const tabletLines = activeTabletList.map((p, i) => {
     ? `${money(discountSetsForQuote.tabletSet.has(i) ? tabletPricing[p.plan] * 0.5 : tabletPricing[p.plan])}/mo`
     : "";
 
-  const financeCost = (num(p.fullPrice) > 0 || num(p.promoDiscount) > 0 || (p.deviceName || "").trim())
+  const financeCost = (state.advanced && (num(p.fullPrice) > 0 || num(p.promoDiscount) > 0 || (p.deviceName || "").trim()))
     ? ` + ${money(f.netMonthly)}/mo (device cost)`
     : "";
 
@@ -2226,7 +2411,7 @@ const watchLines = activeWatchList.map((p, i) => {
     ? `${money(discountSetsForQuote.watchSet.has(i) ? watchPricing[p.plan] * 0.5 : watchPricing[p.plan])}/mo`
     : "";
 
-  const financeCost = (num(p.fullPrice) > 0 || num(p.promoDiscount) > 0 || (p.deviceName || "").trim())
+  const financeCost = (state.advanced && (num(p.fullPrice) > 0 || num(p.promoDiscount) > 0 || (p.deviceName || "").trim()))
     ? ` + ${money(f.netMonthly)}/mo (device cost)`
     : "";
 
@@ -2254,8 +2439,8 @@ ${label}`;
     parts.push(`${internetPlans.join("\n")}`);
   }
 
-  const insuranceTotal = totalInsuranceForQuote();
-  if (insuranceTotal > 0) {
+  const insuranceTotal = t.phoneInsurance + (t.tabletIns || 0) + (t.watchIns || 0);
+  if (state.advanced && insuranceTotal > 0) {
     parts.push(`Insurance:\nDevice protection total: ${money(insuranceTotal)}/mo.`);
   }
 
@@ -2271,7 +2456,7 @@ ${label}`;
     });
   });
 
-  if (perkItems.length) {
+  if (state.advanced && perkItems.length) {
     parts.push(`Perks:\n${perkItems.join("\n")}${(t.mhPerkCredit || 0) > 0 ? `\nMobile + Home perk credit: -${money(t.mhPerkCredit)}/mo` : ""}`);
   }
 
@@ -2488,7 +2673,8 @@ function loadQuote(id){
   document.getElementById("national").checked = !!state.national;
   document.getElementById("autopay").checked = !!state.autopay;
   if (document.getElementById("poypToggle")) document.getElementById("poypToggle").checked = !!state.poyp;
-  document.getElementById("customerName").value = state.customerName || "";
+  if (document.getElementById("advancedToggle")) document.getElementById("advancedToggle").checked = !!state.advanced;
+document.getElementById("customerName").value = state.customerName || "";
   document.getElementById("salesRepName").value = state.salesRepName || "";
   document.getElementById("repPhoneNumber").value = state.repPhoneNumber || "";
   document.getElementById("textOnlyToggle").checked = !!state.textOnly;
@@ -2544,6 +2730,7 @@ function clearQuote(){
   document.getElementById("national").checked = true;
   document.getElementById("autopay").checked = true;
   if (document.getElementById("poypToggle")) document.getElementById("poypToggle").checked = false;
+  if (document.getElementById("advancedToggle")) document.getElementById("advancedToggle").checked = false;
   document.getElementById("customerName").value = "";
   document.getElementById("salesRepName").value = "";
   document.getElementById("repPhoneNumber").value = "";
@@ -2568,7 +2755,8 @@ function loadFromUrl(){
     document.getElementById("national").checked = !!state.national;
     document.getElementById("autopay").checked = !!state.autopay;
   if (document.getElementById("poypToggle")) document.getElementById("poypToggle").checked = !!state.poyp;
-    document.getElementById("customerName").value = state.customerName || "";
+  if (document.getElementById("advancedToggle")) document.getElementById("advancedToggle").checked = !!state.advanced;
+document.getElementById("customerName").value = state.customerName || "";
     document.getElementById("salesRepName").value = state.salesRepName || "";
     document.getElementById("repPhoneNumber").value = state.repPhoneNumber || "";
     document.getElementById("textOnlyToggle").checked = !!state.textOnly;
@@ -2706,6 +2894,13 @@ function closePresetQr(event){
 
 
 
+
+
+function toggleAdvancedMode(){
+  state.advanced = !!document.getElementById("advancedToggle")?.checked;
+  document.body.classList.toggle("simple-mode", !state.advanced);
+  render();
+}
 
 function render(){
   state.national = document.getElementById("national").checked;
