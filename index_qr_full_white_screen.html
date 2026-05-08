@@ -1,0 +1,2928 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Mobile Quote Calculator</title>
+
+<style>
+  :root{
+    --bg:#f3f4f6;
+    --card:#ffffff;
+    --line:#d6d9df;
+    --text:#111111;
+    --muted:#5f6368;
+    --red:#cd040b;
+    --red-dark:#a30008;
+    --red-soft:#fff1f2;
+    --black:#111111;
+    --gray-soft:#f7f8fa;
+    --green:#0f766e;
+    --green-soft:#e8f7f3;
+    --yellow:#fff7d6;
+    --shadow:0 10px 24px rgba(17,17,17,.06);
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:linear-gradient(180deg,#f8f8f9 0%, #eff1f4 100%);
+    color:var(--text);
+  }
+
+  .app{
+    max-width:1180px;
+    margin:0 auto;
+    padding:18px 16px 28px;
+  }
+
+  h1{
+    margin:0 0 6px 0;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-0.02em;
+    color:var(--black);
+  }
+
+  .sub{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:16px;
+  }
+
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:10px;
+    margin-bottom:14px;
+    box-shadow:var(--shadow);
+  }
+
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+    padding-bottom:10px;
+    border-bottom:1px solid #eceef2;
+  }
+
+  .section-head h2{
+    font-size:18px;
+    font-weight:800;
+    margin:0;
+    color:var(--black);
+  }
+
+  .tiny{
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  .line-card,
+  .device-row{
+    border:1px solid #d9dde5;
+    border-radius:16px;
+    padding:13px;
+    margin-bottom:8px;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfbfc 100%);
+  }
+
+  .line-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:8px;
+  }
+
+  .line-title{
+    font-weight:800;
+    color:var(--black);
+    font-size:15px;
+  }
+
+  .link-btn{
+    border:none;
+    background:none;
+    color:var(--red);
+    font-size:12px;
+    font-weight:700;
+    text-decoration:underline;
+    padding:0;
+    cursor:pointer;
+  }
+
+  .pill-row{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+
+  .pill{
+    border:1px solid #ced3dc;
+    background:#fff;
+    color:#111;
+    padding:8px 12px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+
+  .pill.active{
+    background:var(--red);
+    border-color:var(--red);
+    color:#fff;
+    box-shadow:0 8px 18px rgba(205,4,11,.22);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .field{
+    margin-bottom:9px;
+  }
+
+  .field label{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:5px;
+    font-weight:700;
+  }
+
+  input[type="text"], input[type="number"], select, textarea{
+    width:100%;
+    border:1px solid #cfd4dd;
+    border-radius:12px;
+    padding:10px 11px;
+    font-size:14px;
+    background:#fff;
+    color:#111;
+    outline:none;
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus{
+    border-color:#f19ca0;
+    box-shadow:0 0 0 3px rgba(205,4,11,.10);
+  }
+
+  textarea{
+    min-height:96px;
+    resize:vertical;
+  }
+
+  .toggle{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:14px;
+    margin-top:2px;
+    color:#111;
+  }
+
+  .small-note{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:5px;
+    background:#f7f8fa;
+    border:1px solid #eceef2;
+    border-radius:10px;
+    padding:8px 10px;
+  }
+
+  .perks-wrap{
+    margin-top:8px;
+  }
+
+  .perk-row{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    margin-bottom:6px;
+  }
+
+  .perk-row select{flex:1}
+
+  .mini-btn{
+    border:1px solid #d4d8df;
+    background:#fff;
+    padding:7px 10px;
+    border-radius:10px;
+    font-size:12px;
+    cursor:pointer;
+    color:#111;
+    font-weight:700;
+  }
+
+  .add-btn{
+    border:1px solid #f0c6c8;
+    background:var(--red-soft);
+    color:var(--red-dark);
+    padding:8px 10px;
+    border-radius:10px;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+  }
+
+  .price-badge{
+    display:inline-block;
+    margin-top:6px;
+    padding:7px 10px;
+    border-radius:999px;
+    background:#f3f4f7;
+    font-size:12px;
+    font-weight:800;
+    color:#111;
+  }
+
+  .price-badge.discounted{
+    background:var(--green-soft);
+    color:var(--green);
+  }
+
+  .summary-table{
+    width:100%;
+    border-collapse:collapse;
+  }
+
+  .summary-table td{
+    padding:10px 0;
+    border-bottom:1px solid #eceef2;
+    font-size:14px;
+  }
+
+  .summary-table td:last-child{
+    text-align:right;
+    font-weight:800;
+    white-space:nowrap;
+  }
+
+  .summary-table tr:last-child td{
+    border-bottom:none;
+  }
+
+  .total-row td{
+    padding-top:12px;
+    border-top:2px solid #111;
+    font-size:18px;
+    font-weight:900;
+  }
+
+  .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .toolbar button{
+    border:1px solid #d4d8df;
+    background:#fff;
+    color:#111;
+    padding:10px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:700;
+  }
+
+  .toolbar .primary{
+    background:var(--red);
+    border-color:var(--red);
+    color:#fff;
+    box-shadow:0 8px 18px rgba(205,4,11,.18);
+  }
+
+  .saved-list{
+    display:grid;
+    gap:8px;
+  }
+
+  .saved-item{
+    border:1px solid #dcdfe6;
+    border-radius:12px;
+    padding:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    background:#fff;
+  }
+
+  .saved-actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+
+  .quote-box{
+    background:linear-gradient(180deg,#ffffff 0%, #fff7f7 100%);
+    border:1px solid #efc7ca;
+    border-radius:16px;
+    padding:0;
+    overflow:hidden;
+    box-shadow:0 10px 22px rgba(205,4,11,.08);
+  }
+
+  .quote-preview{
+    line-height:1.58;
+    font-size:14px;
+    color:#111;
+  }
+
+  .cq-head{
+    background:linear-gradient(135deg,#cd040b 0%, #8f0006 100%);
+    color:#fff;
+    padding:10px 12px;
+  }
+
+  .cq-head-title{
+    font-size:17px;
+    font-weight:900;
+    margin:0 0 2px 0;
+  }
+
+  .cq-head-sub{
+    font-size:12px;
+    opacity:.95;
+  }
+
+  .cq-body{
+    padding:8px;
+  }
+
+  .cq-block{
+    background:#fff;
+    border:1px solid #ece5e7;
+    border-radius:10px;
+    padding:7px 8px;
+    margin-bottom:5px;
+  }
+
+  .cq-block-title{
+    font-size:13px;
+    font-weight:900;
+    margin-bottom:3px;
+    color:#111;
+  }
+
+  .cq-line{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    padding:1px 0;
+  }
+
+  .cq-line-left{
+    color:#434a54;
+    font-size:12px;
+  }
+
+  .cq-line-right{
+    white-space:nowrap;
+    font-weight:800;
+    color:#111;
+    text-align:right;
+    font-size:12px;
+  }
+
+  .cq-section-label{
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#7c828c;
+    margin:5px 0 4px;
+  }
+
+  .cq-summary{
+    background:#fff5f5;
+    border:1px solid #f1d1d4;
+    border-radius:10px;
+    padding:8px;
+    margin-top:6px;
+  }
+
+  .cq-total{
+    border-top:2px solid #cd040b;
+    margin-top:6px;
+    padding-top:6px;
+    font-size:15px;
+    font-weight:900;
+    color:#a30008;
+  }
+
+  .cq-contact{
+    background:#fff9e8;
+    border:1px solid #f1e1aa;
+    border-radius:10px;
+    padding:8px;
+    margin-top:8px;
+  }
+
+  .status{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:8px;
+    min-height:16px;
+  }
+
+  .qr-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    z-index:9999;
+  }
+
+  .qr-modal{
+    width:min(92vw, 420px);
+    background:#fff;
+    border-radius:18px;
+    padding:18px;
+    box-shadow:none;
+    text-align:center;
+  }
+
+  .qr-modal h3{
+    margin:0 0 6px 0;
+    font-size:20px;
+    color:#111;
+  }
+
+  .qr-modal p{
+    margin:0 0 12px 0;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.4;
+  }
+
+  .qr-image-wrap{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:12px;
+  }
+
+  .qr-image-wrap img{
+    width:240px;
+    height:240px;
+    display:block;
+  }
+
+  .qr-link{
+    font-size:11px;
+    color:var(--muted);
+    word-break:break-all;
+    margin:8px 0 12px;
+  }
+
+  .qr-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  
+  body.force-desktop{
+    background:#e6ebf1;
+  }
+
+  body.force-desktop .app{
+    max-width:1720px;
+    padding:16px 20px 26px;
+  }
+
+  body.force-desktop .app-grid{
+    display:grid !important;
+    grid-template-columns:minmax(980px, 1.5fr) 430px !important;
+    gap:18px;
+    align-items:start;
+  }
+
+  body.force-desktop .builder-side{
+    min-width:0;
+  }
+
+  body.force-desktop .sticky-side{
+    position:sticky;
+    top:16px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  body.force-desktop .panel{
+    background:#fff;
+    border:1px solid #ced6e0;
+    border-radius:8px;
+    padding:12px 14px;
+    box-shadow:none;
+  }
+
+  body.force-desktop .section-head{
+    margin:-12px -14px 12px;
+    padding:10px 14px;
+    background:#f3f6f9;
+    border-bottom:1px solid #d8e0e9;
+    border-radius:8px 8px 0 0;
+  }
+
+  body.force-desktop .grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body.force-desktop .line-card,
+  body.force-desktop .device-row{
+    border-radius:6px;
+    padding:9px 10px;
+    margin-bottom:8px;
+  }
+
+  body.force-desktop .pill{
+    border-radius:5px;
+    padding:6px 9px;
+    font-size:12px;
+  }
+
+  body.force-desktop input[type="text"],
+  body.force-desktop input[type="number"],
+  body.force-desktop select,
+  body.force-desktop textarea{
+    font-size:13px;
+    padding:8px 9px;
+  }
+
+  body.force-desktop .quote-box{
+    border-radius:8px;
+    max-height:48vh;
+    overflow:auto;
+  }
+
+  body.force-desktop .cq-head{
+    padding:9px 10px;
+  }
+
+  body.force-desktop .cq-body{
+    padding:7px;
+  }
+
+  body.force-desktop .cq-block{
+    border-radius:6px;
+    padding:6px 7px;
+    margin-bottom:5px;
+  }
+
+  body.force-desktop .cq-line-left,
+  body.force-desktop .cq-line-right{
+    font-size:10px;
+  }
+
+  body.force-desktop .cq-total{
+    margin-top:6px;
+    padding-top:5px;
+    font-size:13px;
+  }
+
+@media (min-width: 1200px){
+    body{
+      background:#e6ebf1;
+    }
+
+    .app{
+      max-width:1720px;
+      padding:16px 20px 26px;
+    }
+
+    h1{
+      font-size:30px;
+      margin-bottom:4px;
+      letter-spacing:-0.03em;
+    }
+
+    #forceDesktopWrap{
+      margin:0 0 10px 0 !important;
+    }
+
+    .app-grid{
+      display:grid;
+      grid-template-columns:minmax(980px, 1.5fr) 430px;
+      gap:18px;
+      align-items:start;
+    }
+
+    .builder-side{
+      min-width:0;
+    }
+
+    .sticky-side{
+      position:sticky;
+      top:16px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .panel{
+      background:#fff;
+      border:1px solid #ced6e0;
+      border-radius:8px;
+      padding:12px 14px;
+      margin-bottom:14px;
+      box-shadow:none;
+    }
+
+    .sticky-side .panel{
+      margin-bottom:0;
+    }
+
+    .section-head{
+      margin:-12px -14px 12px;
+      padding:10px 14px;
+      background:#f3f6f9;
+      border-bottom:1px solid #d8e0e9;
+      border-radius:8px 8px 0 0;
+    }
+
+    .section-head h2{
+      font-size:14px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    .tiny{
+      font-size:10px;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+
+    .toolbar{
+      gap:8px;
+    }
+
+    .toolbar button{
+      min-height:36px;
+      padding:7px 10px;
+      border-radius:6px;
+      font-size:12px;
+      flex:0 0 auto;
+    }
+
+    .grid{
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:10px;
+    }
+
+    .line-card,
+    .device-row{
+      border:1px solid #d7dee7;
+      border-radius:6px;
+      padding:9px 10px;
+      margin-bottom:8px;
+      background:#fff;
+    }
+
+    .line-top{
+      margin-bottom:7px;
+      padding-bottom:5px;
+      border-bottom:1px solid #eef2f6;
+      align-items:center;
+    }
+
+    .line-title{
+      font-size:12px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    .pill-row{
+      gap:4px;
+      margin-bottom:8px;
+    }
+
+    .pill{
+      border-radius:5px;
+      padding:6px 9px;
+      font-size:12px;
+      font-weight:700;
+      box-shadow:none;
+    }
+
+    .pill.active{
+      box-shadow:none;
+    }
+
+    .field{
+      margin-bottom:8px;
+    }
+
+    .field label{
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      margin-bottom:4px;
+    }
+
+    input[type="text"], input[type="number"], select, textarea{
+      border-radius:6px;
+      padding:8px 9px;
+      font-size:13px;
+      background:#fff;
+    }
+
+    textarea{
+      min-height:78px;
+    }
+
+    .small-note{
+      border-radius:6px;
+      padding:6px 8px;
+      font-size:10px;
+      background:#f7f9fb;
+    }
+
+    .perk-row{
+      gap:8px;
+      margin-bottom:5px;
+    }
+
+    .add-btn,.mini-btn{
+      border-radius:6px;
+      font-size:12px;
+      padding:6px 8px;
+    }
+
+    .summary-table td{
+      padding:7px 0;
+      font-size:12px;
+    }
+
+    .total-row td{
+      padding-top:9px;
+      font-size:15px;
+    }
+
+    .quote-box{
+      border-radius:8px;
+      border:1px solid #d8dde5;
+      box-shadow:none;
+      max-height:48vh;
+      overflow:auto;
+    }
+
+    .cq-head{
+      padding:9px 10px;
+      border-radius:0;
+    }
+
+    .cq-head-title{
+      font-size:15px;
+      letter-spacing:.01em;
+    }
+
+    .cq-head-sub{
+      font-size:10px;
+    }
+
+    .cq-body{
+      padding:7px;
+    }
+
+    .cq-section-label{
+      font-size:10px;
+      margin:4px 0 3px;
+    }
+
+    .cq-block{
+      border-radius:6px;
+      padding:6px 7px;
+      margin-bottom:5px;
+      box-shadow:none;
+    }
+
+    .cq-block-title{
+      font-size:11px;
+      margin-bottom:3px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    .cq-line{
+      gap:8px;
+      padding:1px 0;
+    }
+
+    .cq-line-left,
+    .cq-line-right{
+      font-size:10px;
+    }
+
+    .cq-summary,
+    .cq-contact{
+      border-radius:6px;
+      padding:7px;
+      margin-top:8px;
+    }
+
+    .cq-total{
+      margin-top:6px;
+      padding-top:5px;
+      font-size:13px;
+    }
+  }
+
+  @media (min-width: 701px) and (max-width: 1199px){
+    .app{
+      max-width:1100px;
+      padding:16px 14px 24px;
+    }
+    .app-grid{
+      display:grid;
+      grid-template-columns:minmax(0, 1.15fr) minmax(340px, .85fr);
+      gap:16px;
+      align-items:start;
+    }
+    .sticky-side{
+      position:sticky;
+      top:14px;
+    }
+    .grid{
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .quote-box{
+      max-height:calc(100vh - 76px);
+      overflow:auto;
+    }
+  }
+
+  @media (max-width: 700px){
+    .app{
+      max-width:100%;
+      padding:12px 10px 20px;
+    }
+    h1{
+      font-size:22px;
+    }
+    .sub{
+      font-size:12px;
+      margin-bottom:12px;
+    }
+    .app-grid{
+      display:block;
+    }
+    .sticky-side{
+      position:static;
+    }
+    .panel{
+      border-radius:14px;
+      padding:12px;
+      margin-bottom:12px;
+    }
+    .section-head{
+      padding-bottom:8px;
+      margin-bottom:10px;
+    }
+    .section-head h2{
+      font-size:16px;
+    }
+    .grid{
+      grid-template-columns:1fr;
+      gap:8px;
+    }
+    .line-card,
+    .device-row{
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:8px;
+    }
+    .line-top{
+      align-items:flex-start;
+      gap:6px;
+    }
+    .line-title{
+      font-size:14px;
+    }
+    .pill-row{
+      gap:5px;
+      margin-bottom:8px;
+    }
+    .pill{
+      padding:8px 10px;
+      font-size:12px;
+    }
+    .toolbar{
+      gap:6px;
+    }
+.toolbar button{
+      flex:1 1 calc(50% - 6px);
+      min-height:40px;
+      font-size:12px;
+      padding:9px 10px;
+    }
+    input[type="text"], input[type="number"], select, textarea{
+      font-size:16px;
+      padding:10px;
+    }
+    .summary-table td{
+      font-size:13px;
+      padding:8px 0;
+    }
+    .total-row td{
+      font-size:16px;
+    }
+    .quote-box{
+      border-radius:12px;
+      max-height:none;
+      overflow:visible;
+    }
+    .cq-head{
+      padding:8px 10px;
+    }
+    .cq-head-title{
+      font-size:16px;
+    }
+    .cq-body{
+      padding:7px;
+    }
+    .cq-block{
+      padding:7px;
+      margin-bottom:5px;
+    }
+    .cq-block-title{
+      font-size:12px;
+    }
+    .cq-line{
+      gap:6px;
+      padding:1px 0;
+    }
+    .cq-line-left,
+    .cq-line-right{
+      font-size:11px;
+    }
+    .qr-modal{
+      width:min(94vw, 360px);
+      padding:14px;
+    }
+    .qr-image-wrap img{
+      width:220px;
+      height:220px;
+    }
+  }
+
+  @media (min-width: 1200px){
+    .phone-compact-grid{
+      display:block !important;
+    }
+    .phone-top-meta,
+    .phone-compact-side,
+    .phone-side-grid,
+    .phone-side-item,
+    .phone-side-item.span-2{
+      display:none !important;
+    }
+    .phone-status-line{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      font-size:12px;
+      line-height:1.35;
+      color:var(--text);
+      margin:2px 0 4px;
+    }
+    .phone-status-line .muted{
+      color:var(--muted);
+    }
+    .phone-device-line{
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:8px;
+      align-items:start;
+      margin-top:3px;
+    }
+    .phone-device-line .label{
+      font-size:11px;
+      color:var(--muted);
+      white-space:nowrap;
+      padding-top:2px;
+    }
+    .phone-device-line .value{
+      min-width:0;
+    }
+    .phone-finance-inline,
+    .phone-perks-inline{
+      font-size:12px;
+      line-height:1.35;
+    }
+  }
+
+
+  @media (min-width: 1200px){
+    .phone-compact-grid{
+      display:grid !important;
+      grid-template-columns: 220px minmax(420px, 1.5fr) minmax(260px, 1fr);
+      gap:12px;
+      align-items:start;
+    }
+
+    .phone-col-box{
+      border:1px solid #dbe2ea;
+      background:#fafbfd;
+      border-radius:6px;
+      padding:8px;
+      min-height:100%;
+    }
+
+    .phone-col-title{
+      font-size:10px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      margin-bottom:6px;
+      font-weight:700;
+    }
+
+    .phone-plan-price{
+      font-size:14px;
+      font-weight:800;
+    }
+
+    .phone-device-stack{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .phone-perks-stack{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+  }
+
+
+.summary-discounts{
+  margin:0 0 12px;
+  padding:10px;
+  border:1px solid #e5e9ef;
+  border-radius:8px;
+  background:#f8fafc;
+}
+.summary-discounts-title{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:0 0 8px;
+}
+.summary-discounts-inline{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 10px;
+  align-items:center;
+}
+.summary-discounts-inline .toggle{
+  margin:0;
+  white-space:nowrap;
+}
+.summary-discount-name{
+  flex:1 1 170px;
+  min-width:140px;
+  margin:0;
+}
+.summary-discount-amount{
+  flex:0 1 130px;
+  min-width:120px;
+  margin:0;
+}
+.summary-discount-name input,
+.summary-discount-amount input{
+  padding:7px 8px;
+}
+@media (min-width: 1200px){
+  .summary-discounts{
+    margin-bottom:10px;
+    padding:8px;
+  }
+  .summary-discounts-title{
+    font-size:10px;
+    margin-bottom:6px;
+  }
+  .summary-discounts-inline{
+    gap:6px 8px;
+  }
+  .summary-discount-name{
+    flex:1 1 140px;
+    min-width:120px;
+  }
+  .summary-discount-amount{
+    flex:0 1 110px;
+    min-width:100px;
+  }
+}
+
+
+.summary-discount-name,
+.summary-discount-amount{
+  flex:1 1 160px;
+  min-width:150px;
+}
+.summary-discounts-inline{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 10px;
+  align-items:center;
+}
+
+
+.summary-discount-name{
+  margin-left:0;
+}
+.summary-discount-name,
+.summary-discount-amount{
+  align-self:flex-end;
+}
+.summary-discount-name{
+  order:3;
+}
+.summary-discount-amount{
+  order:4;
+}
+.summary-discounts-inline label.toggle:nth-of-type(1){ order:1; }
+.summary-discounts-inline label.toggle:nth-of-type(2){ order:2; }
+
+
+.summary-discounts-break{
+  flex-basis:100%;
+  width:100%;
+  height:0;
+}
+.summary-discount-name,
+.summary-discount-amount{
+  flex:1 1 160px;
+  min-width:150px;
+}
+
+
+.summary-discounts-inline{
+  display:block !important;
+}
+.summary-discounts-toggles{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 10px;
+  align-items:center;
+  margin-bottom:8px;
+}
+.summary-discounts-fields{
+  display:flex;
+  gap:8px 10px;
+  align-items:center;
+}
+.summary-discounts-break{
+  display:none !important;
+}
+.summary-discount-name,
+.summary-discount-amount{
+  flex:1 1 160px !important;
+  min-width:150px !important;
+  margin:0 !important;
+}
+@media (max-width: 520px){
+  .summary-discounts-fields{
+    flex-wrap:wrap;
+  }
+}
+
+
+.cq-paragraph{
+  background:#fff;
+  border:1px solid #ece5e7;
+  border-radius:10px;
+  padding:10px 12px;
+  margin-bottom:8px;
+  line-height:1.5;
+}
+@media (min-width: 1200px){
+  .cq-paragraph{
+    padding:8px 10px;
+    margin-bottom:6px;
+  }
+}
+
+
+.phone-byod-line{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.phone-byod-note{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.35;
+}
+@media (min-width: 1200px){
+  .phone-byod-note{
+    font-size:11px;
+  }
+}
+
+
+  @media (min-width: 1200px){
+    .device-compact-grid{
+      display:grid;
+      grid-template-columns: 220px minmax(420px, 1fr);
+      gap:12px;
+      align-items:start;
+    }
+    .device-col{
+      min-width:0;
+    }
+    .device-col-box{
+      border:1px solid #dbe2ea;
+      background:#fafbfd;
+      border-radius:6px;
+      padding:8px;
+      min-height:100%;
+    }
+    .device-col-title{
+      font-size:10px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      margin-bottom:6px;
+      font-weight:700;
+    }
+    .device-plan-price{
+      font-size:14px;
+      font-weight:800;
+      margin-top:4px;
+    }
+    .device-stack{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+  }
+
+</style>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+/* improved summary readability */
+.sticky-side .panel,
+.summary-table,
+.summary-discounts,
+#taxDisplay {
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.summary-table td,
+.summary-table th {
+  font-size: 17px;
+}
+
+.summary-table strong,
+.sticky-side strong {
+  font-size: 18px;
+}
+</style>
+
+
+<style>
+/* Simple / Advanced mode */
+.advanced-only-hidden { display: none !important; }
+</style>
+
+
+
+
+
+<style>
+/* Ultra compact simple mode */
+body.simple-mode .line-card,
+body.simple-mode .device-row,
+body.simple-mode .internet-row {
+  padding: 2px 4px !important;
+  margin-bottom: 3px !important;
+  border-radius: 8px !important;
+}
+
+body.simple-mode .phone-compact-grid,
+body.simple-mode .device-compact-grid {
+  gap: 2px !important;
+}
+
+body.simple-mode .phone-col-box,
+body.simple-mode .device-col-box {
+  padding: 2px 4px !important;
+  min-height: unset !important;
+}
+
+body.simple-mode .line-top {
+  margin-bottom: 1px !important;
+  min-height: unset !important;
+}
+
+body.simple-mode .line-title {
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+}
+
+body.simple-mode .pill-row {
+  gap: 2px !important;
+  margin-bottom: 1px !important;
+}
+
+body.simple-mode .pill {
+  padding: 3px 6px !important;
+  font-size: 11px !important;
+  min-height: unset !important;
+  border-radius: 999px !important;
+}
+
+body.simple-mode .phone-plan-price,
+body.simple-mode .device-plan-price {
+  margin-top: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+}
+
+body.simple-mode .phone-col-title,
+body.simple-mode .device-col-title {
+  margin-bottom: 0 !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+}
+
+body.simple-mode .phone-duplicate-btn,
+body.simple-mode button[onclick*="duplicatePhone"] {
+  display: none !important;
+}
+</style>
+
+
+<style>
+/* Simple mode: totals only in summary */
+body.simple-mode .summary-table::before {
+  content: "ESTIMATED MONTHLY TOTAL";
+  display: block;
+  font-weight: 900;
+  font-size: 13px;
+  margin: 0 0 8px 0;
+  letter-spacing: .03em;
+}
+</style>
+
+
+<style>
+/* Extra compact simple mode: remove category-card feel */
+body.simple-mode .builder-side > .panel {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+body.simple-mode .builder-side > .panel .section-head {
+  display: none !important;
+}
+
+body.simple-mode .line-card,
+body.simple-mode .device-row,
+body.simple-mode .internet-row {
+  border: 1px solid #e5e7eb !important;
+  background: #fff !important;
+  padding: 2px 4px !important;
+  margin-bottom: 3px !important;
+  border-radius: 7px !important;
+}
+
+body.simple-mode .phone-col-box,
+body.simple-mode .device-col-box {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 1px 3px !important;
+}
+
+body.simple-mode .phone-compact-grid,
+body.simple-mode .device-compact-grid {
+  grid-template-columns: 1fr !important;
+  gap: 1px !important;
+}
+
+body.simple-mode .line-title {
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+
+body.simple-mode .pill {
+  padding: 3px 6px !important;
+  font-size: 11px !important;
+}
+
+body.simple-mode .phone-plan-price,
+body.simple-mode .device-plan-price {
+  font-size: 12px !important;
+  margin-top: 1px !important;
+}
+</style>
+
+
+
+<style>
+/* Restore simple mode category labels */
+body.simple-mode .line-title,
+body.simple-mode .line-top .line-title,
+body.simple-mode .device-title,
+body.simple-mode .internet-title {
+  display: block !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  opacity: .8 !important;
+}
+
+body.simple-mode .line-top {
+  min-height: 0 !important;
+  margin-bottom: 2px !important;
+}
+</style>
+
+
+<style>
+#presetQrModal {
+  background: #ffffff !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+#presetQrModal > div {
+  box-shadow: none !important;
+}
+#presetQrImg {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <h1>Quote Calculator</h1>
+<div class="app-grid">
+    <div class="builder-side">
+
+<div class="panel" id="modePanel" style="margin-bottom:12px;">
+  <label class="toggle" style="font-weight:800;">
+    <input type="checkbox" id="advancedToggle" onchange="toggleAdvancedMode()" />
+    Advanced mode
+  </label>
+  <div class="tiny">Turn on to show device financing, insurance, BYOD, perks, and trade-in controls.</div>
+</div>
+
+
+  <div class="panel">
+    <div class="section-head">
+      <h2>Tools</h2>
+    </div>
+    <div class="toolbar">
+            <button onclick="copyPresetLink()">Copy Preset Link</button>
+      <button onclick="showPresetQr()">Share via QR</button>
+            <button onclick="clearQuote()">Clear Quote</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-head">
+      <h2>Phone Lines</h2>
+      <div class="tiny">Plans, insurance, financing, perks</div>
+    </div>
+    <div id="phoneLines"></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-head">
+      <h2>Tablets</h2>
+      <div class="tiny"></div>
+    </div>
+    <div id="tabletLines"></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-head">
+      <h2>Watches</h2>
+      <div class="tiny"></div>
+    </div>
+    <div id="watchLines"></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-head">
+      <h2>Home Internet</h2>
+      <div class="tiny">Plan + perks</div>
+    </div>
+    <div id="internetSection"></div>
+  </div>
+
+      </div>
+    <div class="sticky-side">
+  <div class="panel">
+    <div class="section-head">
+      <h2>Summary</h2>
+    </div>
+    
+
+    <div class="summary-discounts">
+      <div class="summary-discounts-title">Discounts</div>
+      <div class="summary-discounts-inline">
+        <div class="summary-discounts-toggles">
+          <label class="toggle"><input type="checkbox" id="national" checked /> National</label>
+          <label class="toggle"><input type="checkbox" id="autopay" checked /> Autopay</label>
+          <label class="toggle"><input type="checkbox" id="poypToggle" onchange="render()" /> POYP</label>
+</div>
+        <div class="summary-discounts-fields">
+          <div class="field summary-discount-name">
+            <input type="text" id="extraDiscountName" placeholder="Discount name" oninput="render()" />
+          </div>
+          <div class="field summary-discount-amount">
+            <input type="text" inputmode="decimal" id="extraDiscountAmount" placeholder="Discount amount" oninput="render()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="small-note" id="poypSummaryNote" style="display:none;">
+      We can help pay off phones from other carriers, ask me for details.
+    </div>
+
+<div class="field">
+  <label>Sales Tax (%)</label>
+  <input 
+    type="number" 
+    id="taxRateInput" 
+    placeholder="8.6" 
+    step="0.01"
+    oninput="renderSummary(); renderQuotePreview();"
+  />
+  <div class="small-note" id="taxDisplay">Estimated Sales Tax: $0.00</div>
+</div>
+
+<table class="summary-table">
+      <tr><td>Total Cost of Plans</td><td id="sumPlansTotal">$0.00</td></tr>
+  <tr><td>Internet Total</td><td id="sumInternetTotal">$0.00</td></tr>
+  <tr><td>Perks Total</td><td id="sumPerksTotal">$0.00</td></tr>
+  <tr><td>M&H Perk Credit</td><td id="sumMHPerkCredit">-$0.00</td></tr>
+      <tr><td>Total Device Cost</td><td id="sumDeviceTotal">$0.00</td></tr>
+      <tr><td>Total Insurance</td><td id="sumInsuranceTotal">$0.00</td></tr>
+      <tr><td>National Discount</td><td id="sumNational">-$0.00</td></tr>
+  <tr><td id="sumExtraDiscountLabel">Additional Discount</td><td id="sumExtraDiscount">-$0.00</td></tr>
+      <tr><td>BYOD Discount</td><td id="sumByodDiscount">-$0.00</td></tr>
+      <tr class="total-row"><td>Total (No Autopay)</td><td id="sumNoAuto">$0.00</td></tr>
+      <tr class="total-row"><td>Total (With Autopay)</td><td id="sumWithAuto">$0.00</td></tr>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="section-head">
+      <h2>Customer Quote</h2>
+      <div class="tiny">Readable version to send</div>
+    </div>
+    <label class="toggle" style="margin-bottom:12px;"><input type="checkbox" id="showCustomerQuote" onchange="toggleCustomerQuoteVisibility()" /> Show customer quote</label>
+    <div id="customerQuoteWrap" style="display:none;">
+    <div class="grid">
+      <div class="field">
+        <label>Customer name (optional)</label>
+        <input type="text" id="customerName"
+       oninput="state.customerName=this.value; renderQuotePreview();"/>
+    </div>
+    
+      <div class="field">
+        <label>Sales rep name (optional)</label>
+        <input type="text" id="salesRepName" placeholder="Your name" oninput="renderQuotePreview()" />
+      </div>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Sales rep phone number (optional)</label>
+        <input type="text" id="repPhoneNumber" placeholder="Your work number" oninput="renderQuotePreview()" />
+      </div>
+      <div class="field">
+        <label>Contact wording</label>
+        <label class="toggle"><input type="checkbox" id="textOnlyToggle" onchange="renderQuotePreview()" /> Please text only</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Extra note (optional)</label>
+      <textarea id="quoteNote" placeholder="Anything extra to include..." oninput="renderQuotePreview()"></textarea>
+    </div>
+    <div class="toolbar" style="margin-bottom:10px;">
+      <button class="primary" onclick="copyCustomerQuoteSms()">Copy SMS Quote</button>
+            
+      
+      
+    </div>
+    <div class="small-note" id="quoteImageStatus">SMS Quote copies a clean text version. </div>
+    <div class="quote-box" id="quoteBox">
+      <div class="quote-preview" id="quotePreview"></div>
+    </div>
+    <canvas id="quoteImageCanvas" style="display:none;"></canvas>
+    </div>
+    <div class="qr-backdrop" id="qrBackdrop" onclick="closeQuoteQr(event)">
+    <div class="qr-modal">
+      <h3>Share Quote</h3>
+      <p>Scan this QR code to open the current quote and reload it.</p>
+      <div class="qr-image-wrap">
+        <img id="qrImage" alt="Quote QR code" />
+      </div>
+      <div class="qr-link" id="qrLinkText"></div>
+      <div class="qr-actions">
+        <button class="primary" onclick="copyPresetLink()">Copy Preset Link</button>
+        <button onclick="closeQuoteQr()">Close</button>
+      </div>
+    </div>
+  </div>
+  <div id="presetQrModal" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#ffffff;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+  " onclick="closePresetQr(event)">
+    <div style="
+      background:#fff;
+      padding:20px;
+      border-radius:16px;
+      text-align:center;
+      max-width:320px;
+      width:90%;
+      box-shadow:none;
+    ">
+      <h3 style="margin:0 0 10px;">Scan to open quote</h3>
+      <img id="presetQrImg" alt="Preset QR code" style="width:320px;height:320px;display:block;margin:12px auto;background:#fff;border-radius:12px;" />
+      <div style="margin-top:10px;">
+        <button onclick="closePresetQr()">Close</button>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TERM_MONTHS = 36;
+const SAVE_KEY = "quote_calculator_saved_quotes_v1";
+
+const phonePricing = {
+  Ultimate:{1:105,2:95,3:80,4:70},
+  Plus:{1:90,2:80,3:65,4:55},
+  Welcome:{1:75,2:65,3:50,4:40}
+};
+
+const tabletPricing = { Welcome:20, Unlimited:40, "Unlimited Plus":50 };
+const watchPricing = { "Unlimited":15, "Unlimited Plus":25 };
+
+const perkPricing = {
+  "Disney Bundle":10,
+  "Netflix & Max (Ads)":13,
+  "YouTube Premium":12,
+  "Apple Music Family":10,
+  "Apple One Individual":15,
+  "Apple One Family":20,
+  "FOX One":15,
+  "Google AI Pro":10,
+  "100GB Hotspot":10,
+  "Cloud":10,
+  "Second Number":10,
+  "3 TravelPass Days":10,
+  "Smartwatch Data":10,
+  "Family Plus":10
+};
+
+const perkOptions = Object.keys(perkPricing);
+const phonePlanOptions = ["Ultimate", "Plus", "Welcome"];
+
+let state = {
+  national:true,
+  autopay:true,
+  internet:[blankInternet()],
+  customerName:"",
+  salesRepName:"",
+  repPhoneNumber:"",
+  textOnly:false,
+  poyp:false,
+  advanced:false,
+  quoteNote:"",
+  phones:[blankPhone()],
+  tablets:[blankDevice()],
+  watches:[blankDevice()]
+};
+
+function blankPhone(){
+  return { plan:"", insurance:false, perks:[], deviceName:"", fullPrice:"", promoDiscount:"", byod:false, byodDiscount:"", tradeIn:false };
+}
+function blankDevice(){
+  return { plan:"", insurance:false, deviceName:"", fullPrice:"", promoDiscount:"" };
+}
+function blankInternet(){
+  return { plan:0, perks:[] };
+}
+function money(n){ return "$" + Number(n || 0).toFixed(2); }
+function num(v){ const n = parseFloat(v); return Number.isFinite(n) ? n : 0; }
+function setStatus(msg){ document.getElementById("status").textContent = msg; }
+
+function activePhones(){ return state.phones.filter(x => x.plan); }
+function byodDiscountTotal(){ return activePhones().reduce((sum,x) => sum + (x.byod ? num(x.byodDiscount) : 0), 0); }
+function activeTablets(){ return state.tablets.filter(x => x.plan); }
+function activeWatches(){ return state.watches.filter(x => x.plan); }
+function normalizeInternetRows(){
+  const active = state.internet.filter(x => x.plan).map(x => ({ plan:x.plan, perks:[...(x.perks || [])] }));
+  if (active.length < 10) active.push(blankInternet());
+  state.internet = active.slice(0,10);
+}
+function internetFinalPrice(row){
+  if (!row || !row.plan) return 0;
+  let price = Number(row.plan);
+  if (activePhones().length > 0) price -= 15;
+  if (state.autopay) price -= 10;
+  return price;
+}
+function internetPerksTotal(){
+  return (state.internet || []).reduce((sum, row) => sum + (row.perks || []).reduce((a,p) => a + (perkPricing[p] || 0), 0), 0);
+}
+function activeInternet(){ return state.internet.filter(x => x.plan); }
+function totalPerkCount(){
+  const phonePerks = activePhones().reduce((sum, row) => sum + (row.perks || []).filter(Boolean).length, 0);
+  const internetPerks = activeInternet().reduce((sum, row) => sum + (row.perks || []).filter(Boolean).length, 0);
+  return phonePerks + internetPerks;
+}
+function mobileHomePerkCredit(){
+  const eligibleUltimateInternetLines = activeInternet().filter(row => row.plan === 85).length;
+  const eligibleCredits = Math.min(eligibleUltimateInternetLines, totalPerkCount());
+  return eligibleCredits * 10;
+}
+
+function tier(){
+  const active = activePhones().length;
+  return Math.min(Math.max(active, 1), 4);
+}
+
+function normalizePhoneRows(){
+  const active = state.phones.filter(x => x.plan).map(x => ({...x, perks:[...x.perks]}));
+  if (active.length < 10) active.push(blankPhone());
+  state.phones = active.slice(0,10);
+}
+function normalizeDeviceRows(key){
+  const active = state[key].filter(x => x.plan).map(x => ({...x}));
+  if (active.length < 10) active.push(blankDevice());
+  state[key] = active.slice(0,10);
+}
+function ensurePhoneTrailingBlank(){
+  if (activePhones().length === state.phones.length && state.phones.length < 10) state.phones.push(blankPhone());
+}
+function deviceDiscountPool(){
+  return activePhones().reduce((sum, x) => {
+    if (x.plan === "Ultimate") return sum + 2;
+    if (x.plan === "Plus") return sum + 1;
+    return sum;
+  }, 0);
+}
+function getDiscountSets(){
+  const pool = deviceDiscountPool();
+  const entries = [];
+  state.tablets.forEach((x,i) => { if (x.plan) entries.push({type:"tablet", i, value:tabletPricing[x.plan]}); });
+  state.watches.forEach((x,i) => { if (x.plan) entries.push({type:"watch", i, value:watchPricing[x.plan]}); });
+  entries.sort((a,b) => {
+    if (b.value !== a.value) return b.value - a.value;
+    if (a.type !== b.type) return a.type.localeCompare(b.type);
+    return a.i - b.i;
+  });
+  const chosen = entries.slice(0, Math.min(pool, entries.length));
+  return {
+    tabletSet: new Set(chosen.filter(x => x.type === "tablet").map(x => x.i)),
+    watchSet: new Set(chosen.filter(x => x.type === "watch").map(x => x.i))
+  };
+}
+function insuranceTierTotal(count){
+  if (count === 1) return 19;
+  if (count === 2) return 38;
+  if (count === 3) return 57;
+  if (count >= 4) return 68;
+  return 0;
+}
+function phoneInsuranceTotal(){ return insuranceTierTotal(activePhones().filter(x => x.insurance).length); }
+function tabletInsuranceTotal(){ return insuranceTierTotal(activeTablets().filter(x => x.insurance).length); }
+function watchInsuranceTotal(){ return insuranceTierTotal(activeWatches().filter(x => x.insurance).length); }
+
+function financeForLine(line){
+  const full = num(line.fullPrice);
+  const promo = Math.min(num(line.promoDiscount), full);
+  const monthlyPayment = full / TERM_MONTHS;
+  const monthlyPromo = promo / TERM_MONTHS;
+  const netMonthly = monthlyPayment - monthlyPromo;
+  return { monthlyPayment, monthlyPromo, netMonthly };
+}
+
+function getTotals(){
+  const t = tier();
+  const phones = activePhones();
+  const phonePlanNo = phones.reduce((s,x) => s + phonePricing[x.plan][t], 0);
+  const phonePlanYes = phones.reduce((s,x) => s + phonePricing[x.plan][t] - 10, 0);
+  const phoneInsurance = phoneInsuranceTotal();
+  const rawPerks = phones.reduce((s,x) => s + x.perks.reduce((a,p) => a + (perkPricing[p] || 0), 0), 0) + internetPerksTotal();
+  const mhPerkCredit = mobileHomePerkCredit();
+  const perks = Math.max(0, rawPerks - mhPerkCredit);
+  const finance = phones.reduce((acc,x) => {
+    const f = financeForLine(x);
+    acc.payment += f.monthlyPayment;
+    acc.promo += f.monthlyPromo;
+    acc.net += f.netMonthly;
+    return acc;
+  }, {payment:0, promo:0, net:0});
+
+  const d = getDiscountSets();
+  const tablet = state.tablets.reduce((s,x,i) => x.plan ? s + (d.tabletSet.has(i) ? tabletPricing[x.plan] * 0.5 : tabletPricing[x.plan]) : s, 0);
+  const watch = state.watches.reduce((s,x,i) => x.plan ? s + (d.watchSet.has(i) ? watchPricing[x.plan] * 0.5 : watchPricing[x.plan]) : s, 0);
+
+  const tabletIns = tabletInsuranceTotal();
+  const watchIns = watchInsuranceTotal();
+  const combinedInsurance = totalInsuranceForQuote();
+
+  const lineCount = phones.length;
+  const nationalDiscount = state.national ? (lineCount === 1 ? 10 : lineCount === 2 ? 15 : lineCount >= 3 ? 20 : 0) : 0;
+
+  const tabletFinance = activeTablets().reduce((acc, x) => {
+    const f = financeForLine(x);
+    acc.payment += f.monthlyPayment;
+    acc.promo += f.monthlyPromo;
+    acc.net += f.netMonthly;
+    return acc;
+  }, {payment:0, promo:0, net:0});
+
+  const watchFinance = activeWatches().reduce((acc, x) => {
+    const f = financeForLine(x);
+    acc.payment += f.monthlyPayment;
+    acc.promo += f.monthlyPromo;
+    acc.net += f.netMonthly;
+    return acc;
+  }, {payment:0, promo:0, net:0});
+
+  const taxRate = (parseFloat(document.getElementById("taxRateInput")?.value || "0") || 0) / 100;
+  const deviceTaxBase =
+    activePhones().reduce((sum, x) => sum + num(x.fullPrice), 0) +
+    activeTablets().reduce((sum, x) => sum + num(x.fullPrice), 0) +
+    activeWatches().reduce((sum, x) => sum + num(x.fullPrice), 0);
+  const estimatedSalesTax = deviceTaxBase * taxRate;
+  const internet = activeInternet().reduce((sum, row) => sum + internetFinalPrice(row), 0);
+  const extraDiscount = Math.max(0, num(state.extraDiscountAmount));
+  const byodDiscount = byodDiscountTotal();
+
+  return {
+    phonePlanNo, phonePlanYes, phoneInsurance, perks, rawPerks, mhPerkCredit,
+    financePayment: finance.payment, financePromo: finance.promo, financeNet: finance.net,
+    tablet, tabletIns, watch, watchIns, nationalDiscount,
+    tabletFinancePayment: tabletFinance.payment, tabletFinancePromo: tabletFinance.promo, tabletFinanceNet: tabletFinance.net,
+    watchFinancePayment: watchFinance.payment, watchFinancePromo: watchFinance.promo, watchFinanceNet: watchFinance.net,
+    deviceTaxBase, taxRate, estimatedSalesTax, internet, extraDiscount, byodDiscount,
+    noAuto: phonePlanNo + phoneInsurance + perks + finance.net + tablet + tabletIns + tabletFinance.net + watch + watchIns + watchFinance.net + internet - nationalDiscount - extraDiscount - byodDiscount,
+    withAuto: phonePlanYes + combinedInsurance + perks + finance.net + tablet + tabletFinance.net + watch + watchFinance.net + internet - nationalDiscount - extraDiscount - byodDiscount
+  };
+}
+
+
+function addPhonePerk(i){
+  if (!state.phones[i]) return;
+  if (!Array.isArray(state.phones[i].perks)) state.phones[i].perks = [];
+  state.phones[i].perks.push("");
+  render();
+}
+
+function updatePhonePerk(i, j, value){
+  if (!state.phones[i]) return;
+  if (!Array.isArray(state.phones[i].perks)) state.phones[i].perks = [];
+  state.phones[i].perks[j] = value;
+  renderSummary();
+  renderQuotePreview();
+  renderPhones();
+}
+
+function removePhonePerk(i, j){
+  if (!state.phones[i] || !Array.isArray(state.phones[i].perks)) return;
+  state.phones[i].perks.splice(j, 1);
+  render();
+}
+
+
+function duplicatePhone(i){
+  const source = state.phones[i];
+  if (!source) return;
+
+  const copy = JSON.parse(JSON.stringify(source));
+  state.phones.splice(i + 1, 0, copy);
+
+  // Keep one trailing blank line if the duplicated line was the last active line.
+  ensurePhoneTrailingBlank();
+
+  render();
+}
+
+function removePhone(i){
+  state.phones.splice(i, 1);
+  if (!state.phones.length) state.phones = [blankPhone()];
+  render();
+}
+
+function renderPhones(){
+  const wrap = document.getElementById("phoneLines");
+  wrap.innerHTML = "";
+  state.phones.forEach((row, i) => {
+    const card = document.createElement("div");
+    card.className = "line-card";
+    const f = financeForLine(row);
+    const planPrice = row.plan ? phonePricing[row.plan][tier()] - (state.autopay ? 10 : 0) : 0;
+    const advanced = !!state.advanced;
+
+    card.innerHTML = `
+      <div class="line-top">
+        <div class="line-title">Phone Line ${i+1}</div>
+        <button type="button" class="link-btn" onclick="duplicatePhone(${i})">duplicate</button>
+        ${state.phones.length > 1 ? `<button type="button" class="link-btn" onclick="removePhone(${i})">remove line</button>` : ``}
+      </div>
+
+      <div class="phone-compact-grid">
+        <!-- LEFT -->
+        <div class="phone-col">
+          <div class="phone-col-box">
+            
+            <div class="pill-row">
+              ${["Welcome","Plus","Ultimate"].map(p => `<button type="button" class="pill ${row.plan===p?"active":""}" onclick="setPhonePlan(${i},'${p}')">${p}</button>`).join("")}
+            </div>
+            ${row.plan ? `
+              <div class="phone-plan-price">${money(planPrice)}/mo</div>
+              ${advanced ? `
+              <label class="toggle">
+                <input type="checkbox" ${row.insurance ? "checked" : ""} onchange="state.phones[${i}].insurance=this.checked; render();" />
+                Insurance
+              </label>
+              <label class="toggle">
+                <input type="checkbox" ${row.byod ? "checked" : ""} onchange="state.phones[${i}].byod=this.checked; if(this.checked){state.phones[${i}].deviceName=''; state.phones[${i}].fullPrice=''; state.phones[${i}].promoDiscount='';} else {state.phones[${i}].byodDiscount='';} render();" />
+                BYOD
+              </label>
+              ` : ``}
+            ` : ``}
+          </div>
+        </div>
+
+        ${row.plan && advanced ? `
+        <!-- MIDDLE -->
+        <div class="phone-col">
+          <div class="phone-col-box">
+            <div class="phone-col-title">${row.byod ? "Bring Your Own Device" : "Device"}</div>
+            ${row.byod ? `
+              <div class="phone-byod-line">
+                <div class="field">
+                  <label>BYOD Discount</label>
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="Type BYOD discount amount"
+                    value="${escapeHtml(row.byodDiscount||"")}"
+                    oninput="state.phones[${i}].byodDiscount=this.value"
+                    onblur="renderSummary(); renderQuotePreview(); renderPhones();" />
+                </div>
+                <div class="phone-byod-note">This line is using customer-provided equipment.</div>
+              </div>
+            ` : `
+              <div class="phone-device-stack">
+                <input
+                  type="text"
+                  value="${escapeHtml(row.deviceName||"")}"
+                  oninput="state.phones[${i}].deviceName=this.value"
+                  onblur="renderSummary(); renderQuotePreview();"
+                  placeholder="Device name" />
+                <div class="grid">
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="Retail"
+                    value="${escapeHtml(row.fullPrice||"")}"
+                    oninput="state.phones[${i}].fullPrice=this.value"
+                    onblur="renderSummary(); renderQuotePreview(); renderPhones();" />
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="Promo"
+                    value="${escapeHtml(row.promoDiscount||"")}"
+                    oninput="state.phones[${i}].promoDiscount=this.value"
+                    onblur="renderSummary(); renderQuotePreview(); renderPhones();" />
+                </div>
+                <label class="toggle" style="margin:0;">
+                  <input type="checkbox" ${row.tradeIn ? "checked" : ""} onchange="state.phones[${i}].tradeIn=this.checked; renderQuotePreview();" />
+                  Eligible trade-in required
+                </label>
+                <div class="phone-finance-inline">
+                  ${money(f.monthlyPayment)}/mo ${num(row.promoDiscount) > 0 ? `(-${money(f.monthlyPromo)})` : ``}
+                  = <strong>${money(f.netMonthly)}/mo</strong>
+                </div>
+              </div>
+            `}
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="phone-col">
+          <div class="phone-col-box">
+            <div class="phone-col-title">Perks</div>
+            <div class="phone-perks-stack">
+              ${(row.perks||[]).map((perk,j)=>`
+                <div class="perk-row">
+                  <select onchange="updatePhonePerk(${i},${j},this.value)">
+                    <option value=""></option>
+                    ${perkOptions.map(o=>`<option value="${o}" ${perk===o?"selected":""}>${o}</option>`).join("")}
+                  </select>
+                  ${perk ? `<div class="tiny" style="min-width:70px;text-align:right;font-weight:700;">${money(perkPricing[perk] || 0)}/mo</div>` : ``}
+                  <button type="button" class="link-btn" onclick="removePhonePerk(${i},${j})">x</button>
+                </div>
+              `).join("")}
+              <button type="button" class="add-btn" onclick="addPhonePerk(${i})">+ Perk</button>
+            </div>
+          </div>
+        </div>
+        ` : ``}
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function renderDevices(key, title){
+  normalizeDeviceRows(key);
+  const wrap = document.getElementById(key === "tablets" ? "tabletLines" : "watchLines");
+  wrap.innerHTML = "";
+  const sets = getDiscountSets();
+  const planMap = key === "tablets" ? tabletPricing : watchPricing;
+  const set = key === "tablets" ? sets.tabletSet : sets.watchSet;
+  const planOptions = Object.keys(planMap);
+
+  state[key].forEach((row, i) => {
+    const p = row.plan;
+    const basePlan = p ? planMap[p] : 0;
+    const discounted = set.has(i);
+    const planPrice = discounted ? basePlan * 0.5 : basePlan;
+    const f = financeForLine(row);
+    const advanced = !!state.advanced;
+
+    const card = document.createElement("div");
+    card.className = "device-row";
+    card.innerHTML = `
+      <div class="line-top">
+        <div class="line-title">${title} ${i+1}</div>
+        ${p ? `<button class="link-btn" type="button" onclick="removeDevice('${key}', ${i})">remove ${title.toLowerCase()}</button>` : ""}
+      </div>
+
+      <div class="device-compact-grid">
+        <div class="device-col">
+          <div class="device-col-box">
+            
+            <div class="pill-row">
+              ${planOptions.map(opt => `<button type="button" class="pill ${p===opt ? "active" : ""}" onclick="setDevicePlan('${key}', ${i}, '${opt}')">${opt}</button>`).join("")}
+            </div>
+            ${p ? `
+              <div class="device-plan-price">${money(planPrice)}${discounted ? ` <span style="font-weight:500;color:#6b7280;">(from ${money(basePlan)})</span>` : ""}/mo</div>
+              ${advanced ? `<label class="toggle"><input type="checkbox" ${row.insurance ? "checked" : ""} onchange="toggleDeviceInsurance('${key}', ${i}, this.checked)" /> Insurance</label>` : ``}
+            ` : ``}
+          </div>
+        </div>
+
+        ${p && advanced ? `
+        <div class="device-col">
+          <div class="device-col-box">
+            <div class="device-col-title">Device</div>
+            <div class="device-stack">
+              <input type="text" value="${escapeAttr(row.deviceName)}" placeholder="${title} name" oninput="state['${key}'][${i}].deviceName=this.value" onblur="renderQuotePreview();" />
+              <div class="grid">
+                <input type="text" inputmode="decimal" value="${escapeAttr(row.fullPrice)}" placeholder="Retail" oninput="updateDeviceMoney('${key}', ${i}, 'fullPrice', this.value)" />
+                <input type="text" inputmode="decimal" value="${escapeAttr(row.promoDiscount)}" placeholder="Promo" oninput="updateDeviceMoney('${key}', ${i}, 'promoDiscount', this.value)" />
+              </div>
+              <div class="phone-finance-inline" id="${key}-finance-note-${i}">
+                ${money(f.monthlyPayment)}/mo ${num(row.promoDiscount) > 0 ? `(-${money(f.monthlyPromo)})` : ``} = <strong>${money(f.netMonthly)}/mo</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+        ` : ``}
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+
+function renderInternet(){
+  normalizeInternetRows();
+  const wrap = document.getElementById("internetSection");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+
+  state.internet.forEach((row, idx) => {
+    const plan = row.plan || 0;
+    const finalPrice = internetFinalPrice(row);
+    const perks = row.perks || [];
+
+    const card = document.createElement("div");
+    card.className = "line-card";
+    card.innerHTML = `
+      <div class="line-top">
+        <div class="line-title">Home Internet ${idx + 1}</div>
+        ${plan ? `<button class="link-btn" type="button" onclick="removeInternetRow(${idx})">remove internet</button>` : ""}
+      </div>
+      <div class="pill-row">
+        ${[['Welcome',60],['Plus',70],['Ultimate',85]].map(([label,p]) => `<button type="button" class="pill ${plan===p ? "active" : ""}" onclick="setInternetPlan(${idx}, ${p})">${label}</button>`).join("")}
+        <button type="button" class="pill ${plan===0 ? "active" : ""}" onclick="setInternetPlan(${idx}, 0)">None</button>
+      </div>
+      ${plan ? `
+        <div class="small-note">Base: $${plan}${activePhones().length > 0 ? ' • -$15 Mobile + Home' : ''}${state.autopay ? ' • -$10 Autopay' : ''} → ${money(finalPrice)}/mo</div>
+        <div class="perks-wrap">
+          ${perks.map((perk,j) => `
+            <div class="perk-row">
+              <select onchange="updateInternetPerk(${idx}, ${j}, this.value)">
+                <option value=""></option>
+                ${perkOptions.map(o => `<option value="${o}" ${perk===o ? "selected" : ""}>${o} ($${perkPricing[o]})</option>`).join("")}
+              </select>
+              <button class="link-btn" type="button" onclick="removeInternetPerk(${idx}, ${j})">remove perk</button>
+            </div>
+          `).join("")}
+          <button class="add-btn" type="button" onclick="addInternetPerk(${idx})">+ Add Perk</button>
+        </div>
+      ` : `<div class="small-note">No internet selected</div>`}
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function setInternetPlan(idx, price){
+  state.internet[idx].plan = price;
+  if (!price) state.internet[idx].perks = [];
+  normalizeInternetRows();
+  render();
+}
+
+function removeInternetRow(idx){
+  state.internet.splice(idx, 1);
+  if (!state.internet.length) state.internet = [blankInternet()];
+  normalizeInternetRows();
+  render();
+}
+
+function addInternetPerk(idx){
+  if (!state.internet[idx].plan) return;
+  state.internet[idx].perks.push("");
+  renderInternet();
+}
+
+function updateInternetPerk(idx, j, value){
+  state.internet[idx].perks[j] = value;
+  renderSummary();
+  renderQuotePreview();
+  toggleCustomerQuoteVisibility();}
+
+function removeInternetPerk(idx, j){
+  state.internet[idx].perks.splice(j, 1);
+  render();
+}
+
+function renderSummary(){
+  state.poyp = !!document.getElementById("poypToggle")?.checked;
+  state.advanced = !!document.getElementById("advancedToggle")?.checked;
+  document.body.classList.toggle("simple-mode", !state.advanced);
+  const t = getTotals();
+
+  const totalPlans = (state.autopay ? t.phonePlanYes : t.phonePlanNo) + t.tablet + t.watch;
+  document.getElementById("sumPlansTotal").textContent = money(totalPlans);
+  document.getElementById("sumInternetTotal").textContent = money(t.internet);
+  document.getElementById("sumPerksTotal").textContent = money(t.rawPerks);
+  document.getElementById("sumMHPerkCredit").textContent = "-" + money(t.mhPerkCredit);
+
+  const totalDeviceNet = t.financeNet + t.tabletFinanceNet + t.watchFinanceNet;
+  document.getElementById("sumDeviceTotal").textContent = money(totalDeviceNet);
+
+  const totalInsurance = totalInsuranceForQuote();
+  document.getElementById("sumInsuranceTotal").textContent = money(totalInsurance);
+
+  document.getElementById("sumNational").textContent = "-" + money(t.nationalDiscount);
+  const extraLabel = document.getElementById("sumExtraDiscountLabel");
+  const extraValue = document.getElementById("sumExtraDiscount");
+  if (extraLabel) extraLabel.textContent = state.extraDiscountName || "Additional Discount";
+  if (extraValue) extraValue.textContent = "-" + money(t.extraDiscount || 0);
+  const byodValue = document.getElementById("sumByodDiscount");
+  if (byodValue) byodValue.textContent = "-" + money(t.byodDiscount || 0);
+  const poypNote = document.getElementById("poypSummaryNote");
+  if (poypNote) poypNote.style.display = state.poyp ? "block" : "none";
+  document.getElementById("sumNoAuto").textContent = money(t.noAuto);
+  document.getElementById("sumWithAuto").textContent = money(t.withAuto);
+
+  const taxDisplay = document.getElementById("taxDisplay");
+  if (taxDisplay){
+    taxDisplay.textContent = `Estimated Sales Tax: ${money(t.estimatedSalesTax)} (on ${money(t.deviceTaxBase)} device total)`;
+  }
+
+  const summaryTable = document.querySelector(".summary-table");
+  if (summaryTable) {
+    summaryTable.querySelectorAll("tr").forEach(row => {
+      const isTotalRow = row.classList.contains("total-row");
+      row.style.display = (!state.advanced && !isTotalRow) ? "none" : "";
+    });
+  }
+
+  if (taxDisplay) {
+    taxDisplay.style.display = state.advanced ? "" : "none";
+  }
+}
+
+function renderQuotePreview(){
+  state.customerName = document.getElementById("customerName") ? document.getElementById("customerName").value : "";
+  state.salesRepName = document.getElementById("salesRepName").value;
+  state.repPhoneNumber = document.getElementById("repPhoneNumber").value;
+  state.textOnly = document.getElementById("textOnlyToggle").checked;
+  state.quoteNote = document.getElementById("quoteNote").value;
+  
+
+  const message = buildCustomerQuoteSms();
+
+  const esc = (v) => String(v || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const paragraphs = message.split(/\n\n+/).map(p => `<div class="cq-paragraph">${esc(p).replace(/\n/g, "<br>")}</div>`).join("");
+
+  const html = [];
+  html.push('<div class="cq-head">');
+  html.push('<div class="cq-head-title">Your Quote</div>');
+  html.push('<div class="cq-head-sub">Customer-ready estimate summary</div>');
+  html.push('</div>');
+  html.push('<div class="cq-body">');
+  html.push(paragraphs);
+  html.push('</div>');
+
+  document.getElementById("quotePreview").innerHTML = html.join("");
+}
+
+
+
+function fullPlanName(plan){
+  if (plan === "Welcome") return "Unlimited Welcome";
+  if (plan === "Plus") return "Unlimited Plus";
+  if (plan === "Ultimate") return "Unlimited Ultimate";
+  return plan || "";
+}
+
+const planDescriptions = {
+  Welcome: "includes unlimited data and access to our 5G network while keeping the monthly cost lower",
+  Plus: "includes unlimited data, 30GB of hotspot, prioritized data for faster and more consistent speeds, and the full capability of our 5G network including 5G Ultra Wideband",
+  Ultimate: "includes unlimited data, unlimited hotspot, prioritized data for faster and more consistent speeds, the full capability of our 5G network including 5G Ultra Wideband, international roaming, additional connected-device discounts, and our best promo eligibility"
+};
+
+function totalInsuranceForQuote(){
+  const totalInsuredDevices =
+    activePhones().filter(x => x.insurance).length +
+    activeTablets().filter(x => x.insurance).length +
+    activeWatches().filter(x => x.insurance).length;
+
+  if (totalInsuredDevices <= 0) return 0;
+  if (totalInsuredDevices === 1) return 19;
+  if (totalInsuredDevices === 2) return 38;
+  if (totalInsuredDevices === 3) return 57;
+  return 68;
+}
+
+function buildCustomerQuoteSms(){
+  const t = getTotals();
+  const activePhoneList = activePhones();
+  const activeTabletList = activeTablets();
+  const activeWatchList = activeWatches();
+  const activeInternetList = activeInternet();
+
+  const parts = [];
+
+  if ((state.customerName || "").trim()) {
+    parts.push(`Hi ${state.customerName.trim()}, here is your monthly estimate`);
+  }
+
+  const phoneLines = activePhoneList.map((p, i) => {
+  const f = financeForLine(p);
+
+  const name = p.byod
+    ? "Bring Your Own Device"
+    : ((p.deviceName || "").trim() || "Phone");
+
+  const label = name;
+
+  const financeCost = (!p.byod && (num(p.fullPrice) > 0 || num(p.promoDiscount) > 0 || (p.deviceName || "").trim()))
+    ? `${money(f.netMonthly)}/mo (device cost)`
+    : "";
+
+  const planPrice = state.autopay
+    ? phonePricing[p.plan][tier()] - 10
+    : phonePricing[p.plan][tier()];
+
+  const planPriceLabel = state.autopay
+    ? `${money(planPrice)}/mo with autopay`
+    : `${money(planPrice)}/mo without autopay`;
+
+  return (state.advanced ? [
+    `Line ${i + 1}: ${fullPlanName(p.plan)}`,
+    `Plan cost: ${planPriceLabel}`,
+    `Device: ${label}`,
+    financeCost ? `Cost: ${financeCost}` : "",
+    p.tradeIn ? "Eligible trade-in required" : ""
+  ] : [
+    `Line ${i + 1}: ${fullPlanName(p.plan)}`,
+    `Plan cost: ${planPriceLabel}`
+  ])
+    .filter(Boolean)
+    .join("\n");
+});
+
+  if (phoneLines.length) {
+    parts.push(`${phoneLines.join("\n\n")}`);
+  }
+
+  const discountSetsForQuote = getDiscountSets();
+
+const tabletLines = activeTabletList.map((p, i) => {
+  const f = financeForLine(p);
+  const name = (p.deviceName || "").trim() || "iPad";
+
+  const label = activeTabletList.length > 1
+    ? `${name} ${i + 1}`
+    : name;
+
+  const planCost = p.plan
+    ? `${money(discountSetsForQuote.tabletSet.has(i) ? tabletPricing[p.plan] * 0.5 : tabletPricing[p.plan])}/mo`
+    : "";
+
+  const financeCost = (state.advanced && (num(p.fullPrice) > 0 || num(p.promoDiscount) > 0 || (p.deviceName || "").trim()))
+    ? ` + ${money(f.netMonthly)}/mo (device cost)`
+    : "";
+
+  return `${label}: ${planCost}${financeCost}`;
+});
+
+if (tabletLines.length) {
+  parts.push(`${tabletLines.join("\n")}`);
+}
+
+const watchLines = activeWatchList.map((p, i) => {
+  const f = financeForLine(p);
+  const name = (p.deviceName || "").trim() || "Watch";
+
+  const label = activeWatchList.length > 1
+    ? `${name} ${i + 1}`
+    : name;
+
+  const planCost = p.plan
+    ? `${money(discountSetsForQuote.watchSet.has(i) ? watchPricing[p.plan] * 0.5 : watchPricing[p.plan])}/mo`
+    : "";
+
+  const financeCost = (state.advanced && (num(p.fullPrice) > 0 || num(p.promoDiscount) > 0 || (p.deviceName || "").trim()))
+    ? ` + ${money(f.netMonthly)}/mo (device cost)`
+    : "";
+
+  return `${label}: ${planCost}${financeCost}`;
+});
+
+if (watchLines.length) {
+  parts.push(`${watchLines.join("\n")}`);
+}
+
+  if (activeInternetList.length) {
+    const internetPlans = activeInternetList.map(x => {
+      const name =
+        x.plan === 60 ? "Verizon Home Internet" :
+        x.plan === 70 ? "Verizon Home Internet Plus" :
+        x.plan === 85 ? "Verizon Home Internet Ultimate" :
+        "Verizon Home Internet";
+
+      const price = internetFinalPrice(x);
+      const label = state.autopay ? `${money(price)}/mo with autopay` : `${money(price)}/mo without autopay`;
+
+      return `${name}
+${label}`;
+    });
+    parts.push(`${internetPlans.join("\n")}`);
+  }
+
+  const insuranceTotal = t.phoneInsurance + (t.tabletIns || 0) + (t.watchIns || 0);
+  if (state.advanced && insuranceTotal > 0) {
+    parts.push(`Insurance:\nDevice protection total: ${money(insuranceTotal)}/mo.`);
+  }
+
+  const perkItems = [];
+  activePhoneList.forEach((line, idx) => {
+    (line.perks || []).filter(Boolean).forEach(perk => {
+      perkItems.push(`Line ${idx + 1} ${perk}: ${money(perkPricing[perk] || 0)}/mo`);
+    });
+  });
+  activeInternetList.forEach((line, idx) => {
+    (line.perks || []).filter(Boolean).forEach(perk => {
+      perkItems.push(`Home Internet ${idx + 1} ${perk}: ${money(perkPricing[perk] || 0)}/mo`);
+    });
+  });
+
+  if (state.advanced && perkItems.length) {
+    parts.push(`Perks:\n${perkItems.join("\n")}${(t.mhPerkCredit || 0) > 0 ? `\nMobile + Home perk credit: -${money(t.mhPerkCredit)}/mo` : ""}`);
+  }
+
+
+  if (state.poyp) {
+    parts.push(`POYP:\nWe can help pay off phones from other carriers, ask me for details.`);
+  }
+
+  
+
+  if (t.estimatedSalesTax > 0) {
+    parts.push(`Due at signing:\nEstimated sales tax: ${money(t.estimatedSalesTax)}.`);
+  }
+
+parts.push(`ESTIMATED MONTHLY TOTAL:
+
+Without autopay: ${money(t.noAuto)}
+>>> WITH AUTOPAY: ${money(t.withAuto)}`);
+
+  
+
+  if (state.quoteNote) {
+    parts.push(state.quoteNote);
+  }
+
+  if (state.salesRepName || state.repPhoneNumber) {
+    let contact = "";
+    if (state.salesRepName) contact += `Thank you,\n${state.salesRepName}`;
+    if (state.repPhoneNumber) {
+      contact += state.textOnly
+        ? `${contact ? "\n" : ""}For any questions or to proceed, please contact me at ${state.repPhoneNumber} TEXT ONLY PLEASE.`
+        : `${contact ? "\n" : ""}For any questions or to proceed, please contact me at ${state.repPhoneNumber}. You’re welcome to call or text.`;
+    }
+    if (contact) parts.push(contact);
+  }
+
+  return parts.join("\n\n").trim();
+}
+
+async function copyCustomerQuoteSms(){
+  const text = buildCustomerQuoteSms();
+  try {
+    await navigator.clipboard.writeText(text);
+    setStatus("SMS quote copied.");
+    return;
+  } catch (e) {}
+
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    setStatus(ok ? "SMS quote copied." : "Copy failed.");
+  } catch (e) {
+    setStatus("Copy failed.");
+  }
+}
+
+async function copyCustomerQuote(){
+  const el = document.getElementById("quotePreview");
+  const plainText = (el?.innerText || el?.textContent || "").trim();
+
+  try {
+    await navigator.clipboard.writeText(plainText);
+    setStatus("Styled quote copied.");
+    return;
+  } catch (e) {}
+
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = plainText;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    setStatus(ok ? "Styled quote copied." : "Copy failed.");
+  } catch (e) {
+    setStatus("Copy failed.");
+  }
+}
+
+function escapeAttr(v){ return String(v || "").replace(/"/g, "&quot;"); }
+
+function updatePhoneFinanceDisplay(i){
+  const line = state.phones[i];
+  if (!line || !line.plan) return;
+  const f = financeForLine(line);
+  const note = document.getElementById(`finance-note-${i}`);
+  if (note) note.textContent = `Payment ${money(f.monthlyPayment)} • Promo -${money(f.monthlyPromo)} • Net ${money(f.netMonthly)}`;
+}
+
+function setPhonePlan(i, plan){
+  state.phones[i].plan = plan;
+  ensurePhoneTrailingBlank();
+  render();
+}
+function removePhoneLine(i){
+  state.phones.splice(i, 1);
+  if (!state.phones.length) state.phones = [blankPhone()];
+  render();
+}
+function togglePhoneInsurance(i, checked){ state.phones[i].insurance = checked; renderSummary(); renderQuotePreview(); }
+function updatePhoneMoney(i, key, value){
+  state.phones[i][key] = value;
+  updatePhoneFinanceDisplay(i);
+  renderSummary();
+  renderQuotePreview();
+}
+function addPerk(i){ state.phones[i].perks.push(""); renderPhones(); }
+function updatePerk(i, j, value){ state.phones[i].perks[j] = value; renderSummary(); renderQuotePreview(); }
+function removePerk(i, j){ state.phones[i].perks.splice(j, 1); render(); }
+
+function setDevicePlan(key, i, value){
+  state[key][i].plan = value;
+  if (!value) state[key][i].insurance = false;
+  render();
+}
+function toggleDeviceInsurance(key, i, checked){
+  state[key][i].insurance = checked;
+  renderSummary();
+  renderQuotePreview();
+}
+
+function updateDeviceFinanceDisplay(key, i){
+  const line = state[key]?.[i];
+  if (!line || !line.plan) return;
+  const f = financeForLine(line);
+  const note = document.getElementById(`${key}-finance-note-${i}`);
+  if (note) {
+    note.innerHTML = `${money(f.monthlyPayment)}/mo ${num(line.promoDiscount) > 0 ? `(-${money(f.monthlyPromo)})` : ``} = <strong>${money(f.netMonthly)}/mo</strong>`;
+  }
+}
+
+function updateDeviceMoney(key, i, field, value){
+  state[key][i][field] = value;
+  updateDeviceFinanceDisplay(key, i);
+  renderSummary();
+  renderQuotePreview();
+}
+function removeDevice(key, i){
+  state[key].splice(i, 1);
+  if (!state[key].length) state[key] = [blankDevice()];
+  render();
+}
+
+function serializeState(){
+  return state;
+}
+function currentQuoteUrl(){
+  const url = new URL(window.location.href);
+  url.hash = "q=" + encodeState(serializeState());
+  return url.toString();
+}
+
+function encodeState(obj){
+  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+}
+function decodeState(raw){
+  return JSON.parse(decodeURIComponent(escape(atob(raw))));
+}
+function updateUrl(){
+  const url = new URL(window.location.href);
+  url.hash = "q=" + encodeState(serializeState());
+  history.replaceState(null, "", url.toString());
+  setStatus("URL updated.");
+}
+async function copyQuoteLink(){
+  updateUrl();
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    setStatus("Quote link copied.");
+  } catch(e){
+    setStatus("Copy failed. Use current URL.");
+  }
+}
+
+function copyPresetLink(){
+  const url = currentQuoteUrl();
+  history.replaceState(null, "", url);
+  navigator.clipboard.writeText(url).then(
+    () => setStatus("Preset link copied."),
+    () => setStatus("Copy failed. Use current URL.")
+  );
+}
+
+function saveQuote(){
+  const name = prompt("Save quote as:");
+  if (!name) return;
+  const existing = JSON.parse(localStorage.getItem(SAVE_KEY) || "[]");
+  existing.unshift({ id: Date.now(), name, state: serializeState() });
+  localStorage.setItem(SAVE_KEY, JSON.stringify(existing.slice(0, 50)));
+
+  setStatus("Quote saved.");
+}
+function loadQuote(id){
+  const existing = JSON.parse(localStorage.getItem(SAVE_KEY) || "[]");
+  const found = existing.find(x => x.id === id);
+  if (!found) return;
+  state = found.state;
+  if (!state.internet) state.internet = [blankInternet()];
+  if (!state.phones?.length) state.phones = [blankPhone()];
+  if (!state.tablets?.length) state.tablets = [blankDevice()];
+  if (!state.watches?.length) state.watches = [blankDevice()];
+  document.getElementById("national").checked = !!state.national;
+  document.getElementById("autopay").checked = !!state.autopay;
+  if (document.getElementById("poypToggle")) document.getElementById("poypToggle").checked = !!state.poyp;
+  if (document.getElementById("advancedToggle")) document.getElementById("advancedToggle").checked = !!state.advanced;
+document.getElementById("customerName").value = state.customerName || "";
+  document.getElementById("salesRepName").value = state.salesRepName || "";
+  document.getElementById("repPhoneNumber").value = state.repPhoneNumber || "";
+  document.getElementById("textOnlyToggle").checked = !!state.textOnly;
+  document.getElementById("quoteNote").value = state.quoteNote || "";
+  if (document.getElementById("customGreeting")) document.getElementById("customGreeting").value = state.customGreeting || "";
+  document.getElementById("extraDiscountName").value = state.extraDiscountName || "";
+  document.getElementById("extraDiscountAmount").value = state.extraDiscountAmount || "";
+  const showQuoteCb = document.getElementById("showCustomerQuote");
+  if (showQuoteCb) showQuoteCb.checked = false;
+  render();
+  setStatus("Quote loaded.");
+}
+function deleteQuote(id){
+  const existing = JSON.parse(localStorage.getItem(SAVE_KEY) || "[]");
+  localStorage.setItem(SAVE_KEY, JSON.stringify(existing.filter(x => x.id !== id)));
+
+  setStatus("Quote deleted.");
+}
+function renderSavedQuotes(){
+  const wrap = document.getElementById("savedQuotes");
+  const existing = JSON.parse(localStorage.getItem(SAVE_KEY) || "[]");
+  wrap.innerHTML = existing.length ? "" : '<div class="tiny">No saved quotes yet.</div>';
+  existing.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "saved-item";
+    div.innerHTML = `
+      <div>
+        <div><strong>${escapeHtml(item.name)}</strong></div>
+      </div>
+      <div class="saved-actions">
+        <button class="mini-btn" type="button" onclick="loadQuote(${item.id})">Load</button>
+        <button class="mini-btn" type="button" onclick="deleteQuote(${item.id})">Delete</button>
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+function escapeHtml(v){
+  return String(v || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function clearQuote(){
+  state = {
+    national:true,
+    autopay:true,
+    customerName:"",
+    workNumber:"",
+    quoteNote:"",
+    internet:[blankInternet()],
+    phones:[blankPhone()],
+    tablets:[blankDevice()],
+    watches:[blankDevice()]
+  };
+  document.getElementById("national").checked = true;
+  document.getElementById("autopay").checked = true;
+  if (document.getElementById("poypToggle")) document.getElementById("poypToggle").checked = false;
+  if (document.getElementById("advancedToggle")) document.getElementById("advancedToggle").checked = false;
+  document.getElementById("customerName").value = "";
+  document.getElementById("salesRepName").value = "";
+  document.getElementById("repPhoneNumber").value = "";
+  document.getElementById("textOnlyToggle").checked = false;
+  document.getElementById("quoteNote").value = "";
+  if (document.getElementById("customGreeting")) document.getElementById("customGreeting").value = "";
+  document.getElementById("extraDiscountName").value = "";
+  document.getElementById("extraDiscountAmount").value = "";
+  const showQuoteCb = document.getElementById("showCustomerQuote");
+  if (showQuoteCb) showQuoteCb.checked = false;
+  render();
+  setStatus("Quote cleared.");
+}
+function loadFromUrl(){
+  const hash = window.location.hash || "";
+  if (!hash.startsWith("#q=")) return;
+  try{
+    state = decodeState(hash.slice(3));
+    if (!state.phones?.length) state.phones = [blankPhone()];
+    if (!state.tablets?.length) state.tablets = [blankDevice()];
+    if (!state.watches?.length) state.watches = [blankDevice()];
+    document.getElementById("national").checked = !!state.national;
+    document.getElementById("autopay").checked = !!state.autopay;
+  if (document.getElementById("poypToggle")) document.getElementById("poypToggle").checked = !!state.poyp;
+  if (document.getElementById("advancedToggle")) document.getElementById("advancedToggle").checked = !!state.advanced;
+document.getElementById("customerName").value = state.customerName || "";
+    document.getElementById("salesRepName").value = state.salesRepName || "";
+    document.getElementById("repPhoneNumber").value = state.repPhoneNumber || "";
+    document.getElementById("textOnlyToggle").checked = !!state.textOnly;
+    document.getElementById("quoteNote").value = state.quoteNote || "";
+  if (document.getElementById("customGreeting")) document.getElementById("customGreeting").value = state.customGreeting || "";
+    document.getElementById("extraDiscountName").value = state.extraDiscountName || "";
+    document.getElementById("extraDiscountAmount").value = state.extraDiscountAmount || "";
+  } catch(e){
+    setStatus("Could not load quote from URL.");
+  }
+}
+
+
+let quoteImageDataUrl = "";
+
+async function generateQuoteImage(){
+  const quoteBox = document.getElementById("quoteBox");
+  const status = document.getElementById("quoteImageStatus");
+  if (!quoteBox || typeof html2canvas === "undefined"){
+    if (status) status.textContent = "Image generation is unavailable right now.";
+    return;
+  }
+
+  const previousBg = quoteBox.style.background;
+  quoteBox.style.background = "#ffffff";
+
+  try {
+    const canvas = await html2canvas(quoteBox, {
+      backgroundColor: "#ffffff",
+      scale: 2,
+      useCORS: true
+    });
+    const hiddenCanvas = document.getElementById("quoteImageCanvas");
+    hiddenCanvas.width = canvas.width;
+    hiddenCanvas.height = canvas.height;
+    hiddenCanvas.getContext("2d").drawImage(canvas, 0, 0);
+    quoteImageDataUrl = hiddenCanvas.toDataURL("image/png");
+    if (status) status.textContent = "Quote image ready. You can now copy or download it.";
+  } catch (e) {
+    if (status) status.textContent = "Could not generate image.";
+  } finally {
+    quoteBox.style.background = previousBg;
+  }
+}
+
+async function copyQuoteImage(){
+  const status = document.getElementById("quoteImageStatus");
+  const canvas = document.getElementById("quoteImageCanvas");
+  if (!canvas || !canvas.width){
+    if (status) status.textContent = "Generate the image first.";
+    return;
+  }
+
+  try {
+    if (!navigator.clipboard || !window.ClipboardItem) throw new Error("unsupported");
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    if (status) status.textContent = "Quote image copied.";
+  } catch (e) {
+    if (status) status.textContent = "Copy image is not supported here. Use Download PNG instead.";
+  }
+}
+
+function downloadQuoteImage(){
+  const status = document.getElementById("quoteImageStatus");
+  if (!quoteImageDataUrl){
+    if (status) status.textContent = "Generate the image first.";
+    return;
+  }
+  const a = document.createElement("a");
+  a.href = quoteImageDataUrl;
+  a.download = "quote.png";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  if (status) status.textContent = "PNG downloaded.";
+}
+
+
+
+function showQuoteQr(){
+  const quoteUrl = currentQuoteUrl();
+  history.replaceState(null, "", quoteUrl);
+  const qrImg = document.getElementById("qrImage");
+  const qrLinkText = document.getElementById("qrLinkText");
+  if (qrImg) {
+    qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(quoteUrl);
+  }
+  if (qrLinkText) {
+    qrLinkText.textContent = quoteUrl;
+  }
+  const backdrop = document.getElementById("qrBackdrop");
+  if (backdrop) backdrop.style.display = "flex";
+  setStatus("QR code ready.");
+}
+
+function closeQuoteQr(event){
+  if (event && event.target && event.target.id !== "qrBackdrop") return;
+  const backdrop = document.getElementById("qrBackdrop");
+  if (backdrop) backdrop.style.display = "none";
+}
+
+
+function toggleCustomerQuoteVisibility(){
+  const cb = document.getElementById("showCustomerQuote");
+  const wrap = document.getElementById("customerQuoteWrap");
+  if (!cb || !wrap) return;
+  wrap.style.display = cb.checked ? "block" : "none";
+}
+
+
+function showPresetQr(){
+  const url = currentQuoteUrl();
+  history.replaceState(null, "", url);
+
+  const qr = document.getElementById("presetQrImg");
+  if (qr){
+    qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(url);
+  }
+
+  const modal = document.getElementById("presetQrModal");
+  if (modal) modal.style.display = "flex";
+  setStatus("Preset QR ready.");
+}
+
+function closePresetQr(event){
+  if (event && event.target && event.target.id !== "presetQrModal") return;
+  const modal = document.getElementById("presetQrModal");
+  if (modal) modal.style.display = "none";
+}
+
+
+
+
+
+
+
+
+
+function toggleAdvancedMode(){
+  state.advanced = !!document.getElementById("advancedToggle")?.checked;
+  document.body.classList.toggle("simple-mode", !state.advanced);
+  render();
+}
+
+function render(){
+  state.national = document.getElementById("national").checked;
+  state.autopay = document.getElementById("autopay").checked;
+  state.poyp = !!document.getElementById("poypToggle")?.checked;
+  state.extraDiscountName = document.getElementById("extraDiscountName")?.value || "";
+  state.extraDiscountAmount = document.getElementById("extraDiscountAmount")?.value || "";
+  renderPhones();
+  renderDevices("tablets", "Tablet");
+  renderDevices("watches", "Watch");
+  normalizeInternetRows();
+  renderInternet();
+  renderSummary();
+  renderQuotePreview();
+
+}
+
+document.getElementById("national").onchange = render;
+document.getElementById("autopay").onchange = render;
+
+loadFromUrl();
+render();
+</script>
+</body>
+</html>
